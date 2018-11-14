@@ -240,7 +240,7 @@ exports.createPages = ({ actions, graphql }) => {
                 }
               });
             } else {
-              throw `No default template found at ${usedTemplate} but page ${
+              throw `No template found at ${usedTemplate} but page ${
                 post.node.pathname
               } tried to use it.`;
             }
