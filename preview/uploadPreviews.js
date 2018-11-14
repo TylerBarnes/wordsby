@@ -3,6 +3,7 @@ const fs = require("fs");
 const importCwd = require("import-cwd");
 const generatePassword = require("password-generator");
 const { spawn } = require("child_process");
+const ProgressBar = require("progress");
 
 const uploadPreviews = () => {
   const config = importCwd("./gatsby-config");
@@ -42,6 +43,26 @@ const uploadPreviews = () => {
   form.append("apikey", private_key);
   form.append("gatsbypress_previews", "gatsbypress_previews");
   form.append("previews", fs.createReadStream("./templates-previews.zip"));
+
+  let uploadSize = 0;
+  // get upload size
+  form.getLength(function(err, size) {
+    uploadSize = parseInt(size, 10);
+  });
+
+  console.log(uploadSize);
+  var bar = new ProgressBar("  uploading [:bar] :rate/bps :percent :etas", {
+    complete: "=",
+    incomplete: " ",
+    width: 20,
+    total: uploadSize
+  });
+
+  // let uploaded = 0;
+  form.on("data", function(data) {
+    // uploaded += data.length;
+    bar.tick(data.length);
+  });
 
   form.submit(uploader_url, function(err, res) {
     if (res.statusCode !== 200) {
