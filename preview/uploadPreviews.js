@@ -45,17 +45,16 @@ const uploadPreviews = () => {
   form.append("previews", fs.createReadStream("./templates-previews.zip"));
 
   let uploadSize = 0;
+  let bar;
   // get upload size
   form.getLength(function(err, size) {
     uploadSize = parseInt(size, 10);
-  });
-
-  console.log(uploadSize);
-  var bar = new ProgressBar("  uploading [:bar] :rate/bps :percent :etas", {
-    complete: "=",
-    incomplete: " ",
-    width: 20,
-    total: uploadSize
+    bar = new ProgressBar("[:bar] :rate/bps :percent :etas", {
+      complete: "=",
+      incomplete: " ",
+      width: 40,
+      total: uploadSize
+    });
   });
 
   // let uploaded = 0;
