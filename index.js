@@ -4,6 +4,7 @@ const program = require("commander");
 const { spawn } = require("child_process");
 const zipPreview = require("./preview/zipPreview").default;
 const uploadPreviews = require("./preview/uploadPreviews").default;
+const readline = require("readline");
 
 const currentDirFiles = fs.readdirSync(process.cwd()).filter(file => {
   return ["src", "gatsby-config.js"].includes(file);
@@ -29,9 +30,14 @@ if (program.preview) {
     process.env["GATSBYPRESS_PREVIEW"] = true;
     const gatsbyBuild = spawn("gatsby", ["build", "--prefix-paths"]);
 
-    gatsbyBuild.stdout.on("data", chunk => {
-      console.log(chunk.toString());
-    });
+    readline
+      .createInterface({
+        input: gatsbyBuild.stdout,
+        terminal: false
+      })
+      .on("line", function(line) {
+        console.log(line);
+      });
 
     gatsbyBuild.on("close", code => {
       console.log("Finished generating previews.");
