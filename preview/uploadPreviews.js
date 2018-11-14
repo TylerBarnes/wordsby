@@ -44,22 +44,19 @@ const uploadPreviews = () => {
   form.append("gatsbypress_previews", "gatsbypress_previews");
   form.append("previews", fs.createReadStream("./templates-previews.zip"));
 
-  let uploadSize = 0;
   let bar;
   // get upload size
   form.getLength(function(err, size) {
-    uploadSize = parseInt(size, 10);
     bar = new ProgressBar("[:bar] :rate/bps :percent :etas", {
       complete: "=",
       incomplete: " ",
       width: 40,
-      total: uploadSize
+      total: parseInt(size, 10)
     });
   });
 
   // let uploaded = 0;
   form.on("data", function(data) {
-    // uploaded += data.length;
     bar.tick(data.length);
   });
 
