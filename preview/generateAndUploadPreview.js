@@ -1,9 +1,12 @@
 const { spawn } = require("child_process");
 const zipPreview = require("./zipPreview").default;
 const uploadPreviews = require("./uploadPreviews").default;
+const isAuthorized = require("./isAuthorized").default;
 const readline = require("readline");
 
 const generateAndUploadPreview = () => {
+  if (!isAuthorized()) return false;
+
   console.log("Generating preview site");
   process.env["GATSBYPRESS_PREVIEW"] = true;
   const gatsbyBuild = spawn("gatsby", ["build", "--prefix-paths"]);
