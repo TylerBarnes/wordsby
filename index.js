@@ -11,8 +11,3 @@ program
   .parse(process.argv);
 
 return !program.preview ? program.help() : generateAndUploadPreview();
-// if (!program.preview) {
-//   return program.help();
-// } else {
-//   return generateAndUploadPreview();
-// }
