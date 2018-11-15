@@ -30,6 +30,9 @@ if (program.preview) {
     process.env["GATSBYPRESS_PREVIEW"] = true;
     const gatsbyBuild = spawn("gatsby", ["build", "--prefix-paths"]);
 
+    // gatsbyBuild.stdout.on("data", chunk => {
+    //   console.log(chunk.toString());
+    // });
     readline
       .createInterface({
         input: gatsbyBuild.stdout,
