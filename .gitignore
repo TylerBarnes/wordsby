@@ -1,2 +1,8 @@
 .DS_STORE
-node_modules
+.DS_Store
+lib/
+node_modules/
+yarn-error.log
+src/package.json
+src/package-lock.json
+src/yarn-lock.json
