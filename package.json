@@ -23,6 +23,8 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
+    "@babel/plugin-transform-regenerator": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
     "archiver": "^3.0.0",
     "commander": "^2.19.0",
     "deepmerge": "^2.2.1",

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require("@babel/polyfill");
 const program = require("commander");
 const isGatsby = require("./functions/isGatsby").default;
 const generateAndUploadPreview = require("./preview/generateAndUploadPreview")
