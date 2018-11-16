@@ -29,8 +29,7 @@ const generateAndUploadPreview = async () => {
     }
     gatsbyBuild.stdin.end();
 
-    let zip = await zipPreview();
-    console.log(zip);
+    console.log(await zipPreview());
     uploadPreviews();
   });
 };
