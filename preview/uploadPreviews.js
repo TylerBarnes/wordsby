@@ -1,37 +1,16 @@
 const FormData = require("form-data");
 const fs = require("fs");
-const importCwd = require("import-cwd");
-const generatePassword = require("password-generator");
 const { spawn } = require("child_process");
 const ProgressBar = require("progress");
 
+const getConfig = require("./getConfig").default;
+
 const uploadPreviews = () => {
-  const config = importCwd("./gatsby-config");
-  const wordpressconfig = config.plugins.filter(
-    plugin => plugin.resolve === "gatsby-source-wordpress"
-  )[0].options;
-  const gatsbypressconfig = config.plugins.filter(
-    plugin => plugin.resolve === "wordsby"
-  )[0].options;
+  const config = getConfig();
 
-  if (!wordpressconfig) {
-    throw Error(
-      `It looks like gatsby-source-wordpress is not installed or configured properly. This starter requires it to be added to gatsby-config.js before gatsby-transformer-gatsbypress.`
-    );
-  }
+  if (!config) return false;
 
-  const private_key = gatsbypressconfig.previewToken;
-
-  if (!gatsbypressconfig || !private_key) {
-    throw Error(`You need to add a previewToken to your gatsby-transformer-gatsbypress options. Try this:
-      {
-        resolve: "gatsby-transformer-gatsbypress",
-        options: {
-          previewToken: "${generatePassword(56, false)}"
-        }
-      }
-    `);
-  }
+  const { wordpressconfig, private_key } = config;
 
   const wpUrl = `${wordpressconfig.protocol}://${wordpressconfig.baseUrl}`;
 
