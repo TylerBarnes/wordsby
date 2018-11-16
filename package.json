@@ -7,10 +7,21 @@
     "wordsby": "./wordsby.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-npm-files": "cp -rf package.json lib && cp -rf readme.md lib",
+    "clean-lib": "node_modules/.bin/rimraf ./lib",
+    "build": "rm src/package.json || true && yarn clean-lib && babel src --out-dir lib --ignore __tests__ && yarn copy-npm-files"
   },
   "author": "Tyler Barnes",
   "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "rimraf": "^2.6.2"
+  },
   "dependencies": {
     "archiver": "^3.0.0",
     "commander": "^2.19.0",
