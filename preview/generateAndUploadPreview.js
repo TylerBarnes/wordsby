@@ -26,15 +26,15 @@ const generateAndUploadPreview = async () => {
     console.log("Finished generating previews.");
     if (code !== 0) {
       console.log(`gatsbyBuild process exited with code ${code}`);
+    } else {
+      try {
+        await zipPreview();
+      } catch (error) {
+        throw error;
+      }
+      uploadPreviews();
     }
     gatsbyBuild.stdin.end();
-
-    try {
-      await zipPreview();
-    } catch (error) {
-      throw error;
-    }
-    uploadPreviews();
   });
 };
 
