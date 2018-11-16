@@ -7,7 +7,7 @@ const generateAndUploadPreview = require("./preview/generateAndUploadPreview")
 if (!isGatsby()) return;
 
 program
-  .option("-p, --preview", "Generate a preview and upload it to WP")
+  .option("preview", "Generate a preview and upload it to WP")
   .parse(process.argv);
 
 return program.preview ? generateAndUploadPreview() : program.help();
