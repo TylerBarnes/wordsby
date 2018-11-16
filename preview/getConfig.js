@@ -3,6 +3,8 @@ const generatePassword = require("password-generator");
 
 const getConfig = () => {
   const config = importCwd("./gatsby-config");
+  if (!config) return false;
+
   const wordpressconfig = config.plugins.filter(
     plugin => plugin.resolve === "gatsby-source-wordpress"
   )[0].options;
