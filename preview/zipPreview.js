@@ -9,8 +9,8 @@ const zipPreview = cb => {
 
     output.on("close", function() {
       console.log(archive.pointer() + " total bytes");
-      // console.log("preview.zip created and ready to send to the wp install.");
-      resolve("preview.zip created and ready to send to the wp install.");
+      console.log("preview.zip created and ready to send to the wp install.");
+      resolve();
     });
 
     archive.on("error", function(err) {
