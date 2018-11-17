@@ -1,6 +1,6 @@
 const { spawn } = require("child_process");
-const zipPreview = require("./zipPreview").default;
-const uploadPreviews = require("./uploadPreviews").default;
+const zipPreview = require("./zipPreview");
+const uploadPreviews = require("./uploadPreviews");
 const isAuthorized = require("./isAuthorized");
 const readline = require("readline");
 
@@ -22,11 +22,26 @@ const generateAndUploadPreview = async () => {
       console.log(line);
     });
 
+  readline
+    .createInterface({
+      input: gatsbyBuild.stderr,
+      terminal: false
+    })
+    .on("line", function(line) {
+      console.log(line);
+    });
+
+  gatsbyBuild.on("error", function(err) {
+    console.log(err);
+  });
+
   gatsbyBuild.on("close", async code => {
-    console.log("Finished generating previews.");
     if (code !== 0) {
-      console.log(`gatsbyBuild process exited with code ${code}`);
+      console.log(
+        `gatsbyBuild process exited with code ${code}. There will be additional information above.`
+      );
     } else {
+      console.log("Finished generating previews.");
       try {
         await zipPreview();
       } catch (error) {
@@ -38,4 +53,4 @@ const generateAndUploadPreview = async () => {
   });
 };
 
-exports.default = generateAndUploadPreview;
+module.exports = generateAndUploadPreview;

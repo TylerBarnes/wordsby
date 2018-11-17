@@ -23,4 +23,4 @@ const zipPreview = cb => {
   });
 };
 
-exports.default = zipPreview;
+module.exports = zipPreview;

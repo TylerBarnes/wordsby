@@ -3,7 +3,7 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 const ProgressBar = require("progress");
 
-const getConfig = require("./getConfig").default;
+const getConfig = require("./getConfig");
 
 const uploadPreviews = () => {
   const config = getConfig();
@@ -64,4 +64,4 @@ const uploadPreviews = () => {
   });
 };
 
-exports.default = uploadPreviews;
+module.exports = uploadPreviews;

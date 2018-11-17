@@ -41,4 +41,4 @@ const getConfig = () => {
   }
 };
 
-exports.default = getConfig;
+module.exports = getConfig;

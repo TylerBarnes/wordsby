@@ -15,4 +15,4 @@ const isGatsby = () => {
   }
 };
 
-exports.default = isGatsby;
+module.exports = isGatsby;
