@@ -5,8 +5,8 @@ const ProgressBar = require("progress");
 
 const getConfig = require("./getConfig");
 
-const uploadPreviews = () => {
-  const config = getConfig();
+const uploadPreviews = async () => {
+  const config = await getConfig();
 
   if (!config) return false;
 
