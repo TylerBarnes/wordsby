@@ -10,7 +10,7 @@ const wordsby = () => {
 
   program
     .option("preview", "Generate a preview and upload it to WP")
-    .option("test")
+    .option("test", "Start gatsby develop in preview mode.")
     .parse(process.argv);
 
   if (program.test) {
