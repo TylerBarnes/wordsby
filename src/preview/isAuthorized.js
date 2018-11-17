@@ -5,8 +5,7 @@ const getConfig = require("./getConfig");
 const isAuthorized = async () => {
   console.log("Authorizing..");
 
-  const config = getConfig();
-
+  const config = await getConfig();
   const { wordpressconfig, private_key } = config;
 
   const wpUrl = `${wordpressconfig.protocol}://${wordpressconfig.baseUrl}`;
@@ -21,6 +20,7 @@ const isAuthorized = async () => {
       body: form
     });
     let data = await response.json();
+    console.log("Success");
     return data;
   } catch (e) {
     throw e;
