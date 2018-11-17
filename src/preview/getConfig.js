@@ -1,6 +1,14 @@
 const importCwd = require("import-cwd");
 const generatePassword = require("password-generator");
+const passwordValidator = require("password-validator");
 
+const generatePreviewTokenConfig = () => `
+      {
+        resolve: "wordsby",
+        options: {
+          previewToken: "${generatePassword(56, false)}"
+        }
+      }`;
 const getConfig = () => {
   return new Promise((resolve, reject) => {
     const config = importCwd("./gatsby-config");
@@ -15,21 +23,38 @@ const getConfig = () => {
 
     if (!wordpressconfig) {
       throw Error(
-        `It looks like gatsby-source-wordpress is not installed or configured properly. This starter requires it to be added to gatsby-config.js before gatsby-transformer-gatsbypress.`
+        `It looks like gatsby-source-wordpress is not installed or configured properly. This starter requires it to be added to gatsby-config.js before wordsby.`
       );
     }
 
     const private_key = gatsbypressconfig.previewToken;
 
     if (!gatsbypressconfig || !private_key) {
-      throw Error(`You need to add a previewToken to your gatsby-transformer-gatsbypress options. Try this:
-      {
-        resolve: "gatsby-transformer-gatsbypress",
-        options: {
-          previewToken: "${generatePassword(56, false)}"
-        }
-      }
+      throw Error(`You need to add a previewToken to your wordsby options. Try this:
+      ${generatePreviewTokenConfig()}
     `);
+    } else if (private_key) {
+      const schema = new passwordValidator();
+      schema
+        .is()
+        .min(15) // Minimum length 8
+        .has()
+        .uppercase() // Must have uppercase letters
+        .has()
+        .lowercase() // Must have lowercase letters
+        .has()
+        .digits() // Must have digits
+        .has()
+        .not()
+        .spaces(); // Should not have spaces
+
+      const validate_key = schema.validate(private_key);
+
+      if (!validate_key) {
+        reject(`Your previewToken is too weak. Try this:
+          ${generatePreviewTokenConfig()}
+        `);
+      }
     }
 
     if (wordpressconfig && gatsbypressconfig && private_key) {
@@ -38,9 +63,10 @@ const getConfig = () => {
         private_key
       });
     } else {
-      throw `Your configuration is incorrect.`;
-      reject();
+      reject(`Your configuration is incorrect.`);
     }
+  }).catch(e => {
+    console.error(e);
   });
 };
 
