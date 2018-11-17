@@ -7,7 +7,7 @@ const deepmerge = require("deepmerge");
 
 const componentFileType = "js";
 const templatesPath = path.resolve(`./src/templates/`);
-const defaultTemplate = `${templatesPath}/single/index.js`;
+const defaultTemplate = `${templatesPath}/index.js`;
 
 let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
   dot: true
