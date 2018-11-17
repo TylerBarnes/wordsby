@@ -26,6 +26,7 @@
     "@babel/plugin-transform-regenerator": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "archiver": "^3.0.0",
+    "better-react-spinkit": "^2.0.4",
     "commander": "^2.19.0",
     "deepmerge": "^2.2.1",
     "form-data": "^2.3.3",
