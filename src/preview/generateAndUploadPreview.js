@@ -5,8 +5,14 @@ const isAuthorized = require("./isAuthorized");
 const readline = require("readline");
 
 const generateAndUploadPreview = async () => {
-  const authorized = await isAuthorized();
-  console.log(authorized);
+  // console.log(authorized);
+  let authorized = false;
+  try {
+    authorized = await isAuthorized();
+  } catch (e) {
+    throw e;
+  }
+
   if (authorized !== "success") return;
 
   console.log("Generating preview site");
