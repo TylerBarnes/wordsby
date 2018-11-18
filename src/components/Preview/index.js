@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PreviewLoader from "./PreviewLoader";
-import preventDefaultAllLinks from "../../functions/preventDefaultAllLinks";
 
 export default class Preview extends Component {
   constructor(props) {
@@ -81,8 +80,6 @@ export default class Preview extends Component {
           previewData: { wordpressWpCollections: this.state.previewData }
         });
       });
-
-      preventDefaultAllLinks();
 
       return childrenWithPreview;
     } else {
