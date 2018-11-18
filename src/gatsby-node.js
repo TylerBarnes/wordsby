@@ -95,7 +95,8 @@ exports.createPages = ({ actions, graphql }) => {
 
       const taxonomy_slugs = result.data.allWordpressWpTaxonomies.edges
         .map(({ node }) => node.slug)
-        .filter(slug => slug !== "post_tag");
+        .filter(slug => slug !== "post_tag")
+        .filter(slug => slug !== "dummy");
 
       return graphql(`
         {
@@ -132,7 +133,9 @@ exports.createPages = ({ actions, graphql }) => {
             return Promise.reject(result.errors);
           }
 
-          const posts = result.data.allWordpressWpCollections.edges;
+          const posts = result.data.allWordpressWpCollections.edges.filter(
+            ({ node: post }) => post.post_type !== "dummy"
+          );
 
           const weShouldGenerateTaxonomyPages = existingTemplateFiles.some(
             item => item.includes("/taxonomy/")
@@ -146,7 +149,14 @@ exports.createPages = ({ actions, graphql }) => {
             let allTaxonomies = {};
             for (const postTaxonomies of postTaxonomiesGroups) {
               for (const key of Object.keys(postTaxonomies)) {
-                const value = postTaxonomies[key];
+                let value = postTaxonomies[key];
+
+                if (value && value.terms) {
+                  if (value.terms.some(term => term.slug === "dummy")) {
+                    // dont make dummy term pages.
+                    value = false;
+                  }
+                }
 
                 if (!!value) {
                   if (allTaxonomies[key]) {
