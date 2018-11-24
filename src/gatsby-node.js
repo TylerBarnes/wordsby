@@ -4,6 +4,7 @@ const fs = require("fs");
 const glob = require("glob");
 const createTemplatesJson = require("./preview/createTemplatesJson");
 const deepmerge = require("deepmerge");
+const paginate = require("gatsby-awesome-pagination").paginate;
 
 const componentFileType = "js";
 const templatesPath = path.resolve(`./src/templates/`);
@@ -109,6 +110,11 @@ exports.createPages = ({ actions, graphql }) => {
                 pathname
                 post_type
                 template_slug
+                acf {
+                  is_archive
+                  posts_per_page
+                  post_type
+                }
                 taxonomies {
                   ${taxonomy_slugs.map(slug => {
                     return `${slug} {
@@ -233,26 +239,66 @@ exports.createPages = ({ actions, graphql }) => {
               post.node.template_slug
             }.${componentFileType}`;
 
-            let usedTemplate;
+            const acf = post.node.acf;
 
-            if (existingTemplateFiles.includes(template)) {
-              usedTemplate = template;
-            } else {
-              usedTemplate = defaultTemplate;
-            }
+            const archivePostType = acf ? post.node.acf.post_type : false;
 
-            if (existingTemplateFiles.includes(usedTemplate)) {
-              createPage({
-                path: post.node.pathname,
-                component: usedTemplate,
-                context: {
-                  id: post.node.wordpress_id
-                }
-              });
+            if (acf && acf.is_archive) {
+              const archivePosts = posts.filter(
+                ({ node }) => node.post_type === archivePostType
+              );
+
+              const itemsPerPage = parseInt(acf.posts_per_page);
+              const defaultArchiveTemplate = `${templatesPath}/archive/index.${componentFileType}`;
+              const postTypeArchiveTemplate = `${templatesPath}/archive/${archivePostType}.${componentFileType}`;
+
+              let usedTemplate;
+
+              if (existingTemplateFiles.includes(postTypeArchiveTemplate)) {
+                usedTemplate = postTypeArchiveTemplate;
+              } else {
+                usedTemplate = defaultArchiveTemplate;
+              }
+
+              if (existingTemplateFiles.includes(usedTemplate)) {
+                paginate({
+                  createPage: createPage,
+                  component: usedTemplate,
+                  items: archivePosts,
+                  itemsPerPage: itemsPerPage,
+                  pathPrefix: post.node.pathname.replace(/\/$/, ""),
+                  context: {
+                    id: post.node.wordpress_id,
+                    post_type: post.node.acf.post_type
+                  }
+                });
+              } else {
+                throw `No template found at ${usedTemplate} but page ${
+                  post.node.pathname
+                } tried to use it.`;
+              }
             } else {
-              throw `No template found at ${usedTemplate} but page ${
-                post.node.pathname
-              } tried to use it.`;
+              let usedTemplate;
+
+              if (existingTemplateFiles.includes(template)) {
+                usedTemplate = template;
+              } else {
+                usedTemplate = defaultTemplate;
+              }
+
+              if (existingTemplateFiles.includes(usedTemplate)) {
+                createPage({
+                  path: post.node.pathname,
+                  component: usedTemplate,
+                  context: {
+                    id: post.node.wordpress_id
+                  }
+                });
+              } else {
+                throw `No template found at ${usedTemplate} but page ${
+                  post.node.pathname
+                } tried to use it.`;
+              }
             }
           });
         })

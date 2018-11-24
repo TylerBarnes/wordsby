@@ -1286,6 +1286,13 @@ fsevents@^1.2.2:
     nan "^2.9.2"
     node-pre-gyp "^0.10.0"
 
+gatsby-awesome-pagination@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/gatsby-awesome-pagination/-/gatsby-awesome-pagination-0.3.3.tgz#36c93ba2b39f3c408277b1809501d1eda94dd14a"
+  integrity sha512-ajvVcpo0a5mzzr1tgeTv9iKRd4sdtzEEuFq1CBbEQebRhiAcjDR3S36qzKdn+GwMAGFi5Ngs/2ZslxxSUCtLfw==
+  dependencies:
+    lodash "^4.17.10"
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"
