@@ -94,6 +94,22 @@ exports.createPages = ({ actions, graphql }) => {
           }
         }
       }
+
+      allWordpressWpTaxTerms {
+        edges {
+          node {
+            name
+            pathname
+            terms {
+              slug
+              name
+              taxonomy
+              wordpress_id
+              pathname
+            }
+          }
+        }
+      }
     }
   `)
     .then(result => {
@@ -174,11 +190,71 @@ exports.createPages = ({ actions, graphql }) => {
           }
         }
       });
+
+      const weShouldGenerateTaxonomyPages = existingTemplateFiles.some(item =>
+        item.includes("/taxonomy/")
+      );
+
+      if (weShouldGenerateTaxonomyPages) {
+        const taxonomies = result.data.allWordpressWpTaxTerms.edges;
+
+        taxonomies.map(({ node: taxonomy }) => {
+          const { name, pathname, terms } = taxonomy;
+          const template = `${templatesPath}/taxonomy/archive/${name}.${componentFileType}`;
+
+          let usedTemplate;
+
+          if (existingTemplateFiles.includes(template)) {
+            usedTemplate = template;
+          } else {
+            usedTemplate = `${templatesPath}/taxonomy/archive/index.${componentFileType}`;
+          }
+
+          if (
+            existingTemplateFiles.includes(usedTemplate) &&
+            terms.length > 0
+          ) {
+            // create taxonomy archives
+            createPage({
+              path: pathname,
+              component: usedTemplate,
+              context: {
+                taxonomy_slug: name,
+                terms: terms
+              }
+            });
+          }
+
+          terms &&
+            terms.map(term => {
+              const { pathname, taxonomy, slug, wordpress_id } = term;
+
+              const template = `${templatesPath}/taxonomy/single/${taxonomy}.${componentFileType}`;
+
+              let usedTemplate;
+
+              if (existingTemplateFiles.includes(template)) {
+                usedTemplate = template;
+              } else {
+                usedTemplate = `${templatesPath}/taxonomy/single/index.${componentFileType}`;
+              }
+
+              if (existingTemplateFiles.includes(usedTemplate)) {
+                // create term pages
+                createPage({
+                  path: pathname,
+                  component: usedTemplate,
+                  context: { slug: slug, wordpress_id: wordpress_id }
+                });
+              }
+            });
+        });
+      }
     })
     .catch(err => {
       throw `
             ${err}
-            Either your WP site is down, your WP connection details are wrong or GatsbyPress Admin isn't active on the WP install. This starter will not work properly without fixing those three things. Download the admin theme at https://github.com/TylerBarnes/GatsbyPress-Admin
+            Either your WP site is down, your WP connection details are wrong or Wordsby Admin isn't active on the WP install. This starter will not work properly without fixing those three things. Download the admin theme at https://github.com/TylerBarnes/GatsbyPress-Admin
           `;
     });
 };
