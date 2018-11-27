@@ -162,9 +162,11 @@ exports.createPages = ({ actions, graphql }) => {
               }
             });
           } else {
-            throw `No template found at ${usedTemplate} but page ${
-              post.node.pathname
-            } tried to use it.`;
+            console.warn(
+              `No template found at ${usedTemplate} but page ${
+                post.node.pathname
+              } tried to use it.`
+            );
           }
         } else {
           let usedTemplate;
@@ -184,9 +186,11 @@ exports.createPages = ({ actions, graphql }) => {
               }
             });
           } else {
-            throw `No template found at ${usedTemplate} but page ${
-              post.node.pathname
-            } tried to use it.`;
+            console.warn(
+              `No template found at ${usedTemplate} but page ${
+                post.node.pathname
+              } tried to use it.`
+            );
           }
         }
       });
@@ -254,7 +258,7 @@ exports.createPages = ({ actions, graphql }) => {
     .catch(err => {
       throw `
             ${err}
-            Either your WP site is down, your WP connection details are wrong or Wordsby Admin isn't active on the WP install. This starter will not work properly without fixing those three things. Download the admin theme at https://github.com/TylerBarnes/GatsbyPress-Admin
+            If the error above isn't descriptive enough maybe your WP site is down, your WP connection details are wrong or Wordsby Admin isn't active on your WP install. Download the admin theme at https://github.com/TylerBarnes/GatsbyPress-Admin
           `;
     });
 };
