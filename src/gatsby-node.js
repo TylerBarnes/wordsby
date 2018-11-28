@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const glob = require("glob");
 const createTemplatesJson = require("./preview/createTemplatesJson");
-const deepmerge = require("deepmerge");
 const paginate = require("gatsby-awesome-pagination").paginate;
 
 const componentFileType = "js";
