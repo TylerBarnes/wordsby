@@ -123,7 +123,7 @@ exports.createPages = ({ actions, graphql }) => {
       );
 
       // create post type pages
-      _.each(posts, post => {
+      posts.forEach((post, index) => {
         const template = `${templatesPath}/${
           post.node.template_slug
         }.${componentFileType}`;
@@ -182,7 +182,9 @@ exports.createPages = ({ actions, graphql }) => {
               path: post.node.pathname,
               component: usedTemplate,
               context: {
-                id: post.node.wordpress_id
+                id: post.node.wordpress_id,
+                previousPost: posts[index - 1] ? posts[index - 1].node : {},
+                nextPost: posts[index + 1] ? posts[index + 1].node : {}
               }
             });
           } else {
