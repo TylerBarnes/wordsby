@@ -84,6 +84,7 @@ exports.createPages = ({ actions, graphql }) => {
             wordpress_id
             pathname
             post_type
+            post_title
             template_slug
             acf {
               is_archive
