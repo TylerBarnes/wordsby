@@ -1,5 +1,6 @@
 var file_system = require("fs");
 var archiver = require("archiver");
+const pretty = require("prettysize");
 
 const zipPreview = cb => {
   return new Promise((resolve, reject) => {
@@ -8,7 +9,7 @@ const zipPreview = cb => {
     var archive = archiver("zip");
 
     output.on("close", function() {
-      console.log(archive.pointer() + " total bytes");
+      console.log(`preview zip is ${pretty(archive.pointer())}`);
       console.log("preview.zip created and ready to send to the wp install.");
       resolve();
     });

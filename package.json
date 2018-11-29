@@ -1,6 +1,6 @@
 {
   "name": "wordsby",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -37,6 +37,7 @@
     "node-fetch": "^2.3.0",
     "password-generator": "^2.2.0",
     "password-validator": "^4.1.1",
+    "prettysize": "^1.1.0",
     "progress": "^2.0.1",
     "rimraf": "^2.6.2"
   }

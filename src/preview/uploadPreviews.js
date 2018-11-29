@@ -41,7 +41,9 @@ const uploadPreviews = async () => {
 
   form.submit(uploader_url, function(err, res) {
     if (res.statusCode !== 200) {
-      console.error("Preview Files not uploaded. Check your settings.");
+      console.error(
+        "Preview Files not uploaded. Check your settings and logs. You might need to increase the post_max_size and upload_max_filesize on your server."
+      );
       console.error(res.statusCode);
       console.error(res.statusMessage);
     } else {
