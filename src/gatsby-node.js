@@ -157,6 +157,7 @@ exports.createPages = ({ actions, graphql }) => {
               itemsPerPage: itemsPerPage,
               pathPrefix: post.node.pathname.replace(/\/$/, ""),
               context: {
+                archive: true,
                 id: post.node.wordpress_id,
                 post_type: post.node.acf.post_type
               }
