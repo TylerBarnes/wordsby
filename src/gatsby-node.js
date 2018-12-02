@@ -122,8 +122,6 @@ exports.createPages = ({ actions, graphql }) => {
         ({ node: post }) => post.post_type !== "dummy"
       );
 
-      console.log(posts);
-
       // create post type pages
       posts.forEach((post, index) => {
         const template = `${templatesPath}/${
