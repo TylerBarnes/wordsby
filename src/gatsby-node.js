@@ -122,6 +122,8 @@ exports.createPages = ({ actions, graphql }) => {
         ({ node: post }) => post.post_type !== "dummy"
       );
 
+      console.log(posts);
+
       // create post type pages
       posts.forEach((post, index) => {
         const template = `${templatesPath}/${
@@ -184,8 +186,14 @@ exports.createPages = ({ actions, graphql }) => {
               component: usedTemplate,
               context: {
                 id: post.node.wordpress_id,
-                previousPost: posts[index - 1] ? posts[index - 1].node : {},
-                nextPost: posts[index + 1] ? posts[index + 1].node : {}
+                previousPost:
+                  typeof posts[index - 1] !== "undefined"
+                    ? posts[index - 1].node
+                    : {},
+                nextPost:
+                  typeof posts[index + 1] !== "undefined"
+                    ? posts[index + 1].node
+                    : {}
               }
             });
           } else {
