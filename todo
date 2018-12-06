@@ -1,8 +1,13 @@
-☐ replace "gatsbypress" with "wordsby" everywhere
-☐ make menu, flexible content, and image components importable from wordsby
-☐ add acf options endpoint
-☐ fix wp menus
-☐ fix wp theme styles
-☐ convert bare site to use wordsby
-☐ create starter
-☐ test huge number of blog posts and images with wordsby and shared hosting
+For now:
+    ☐ replace "gatsbypress" with "wordsby" everywhere
+    ☐ make menu, flexible content, and image components importable from wordsby
+    ☐ add acf options endpoint
+    ☐ fix wp menus
+    ☐ fix wp theme styles
+    ☐ convert bare site to use wordsby
+    ☐ create starter
+    ☐ test huge number of blog posts and images with wordsby and shared hosting
+    ☐ create readme
+
+For the future:
+    ☐ create wordpress plugin that saves posts as markdown and commits them to the gatsby repo (like netlify cms)
