@@ -1,0 +1,8 @@
+☐ replace "gatsbypress" with "wordsby" everywhere
+☐ make menu, flexible content, and image components importable from wordsby
+☐ add acf options endpoint
+☐ fix wp menus
+☐ fix wp theme styles
+☐ convert bare site to use wordsby
+☐ create starter
+☐ test huge number of blog posts and images with wordsby and shared hosting
