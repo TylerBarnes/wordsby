@@ -10,4 +10,4 @@ For now:
     ☐ create readme
 
 For the future:
-    ☐ create wordpress plugin that saves posts as markdown and commits them to the gatsby repo (like netlify cms)
+    ☐ create wordpress plugin that saves posts as markdown and commits them to the gatsby repo (basically the WP version of netlify cms)
