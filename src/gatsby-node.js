@@ -119,7 +119,7 @@ exports.createPages = ({ actions, graphql }) => {
       }
 
       const posts = result.data.allWordpressWpCollections.edges.filter(
-        ({ node: post }) => post.post_type !== "dummy"
+        ({ node: post }) => post.post_type !== "schema_builder"
       );
 
       // create post type pages
@@ -210,6 +210,8 @@ exports.createPages = ({ actions, graphql }) => {
 
       if (weShouldGenerateTaxonomyPages) {
         const taxonomies = result.data.allWordpressWpTaxTerms.edges;
+
+        console.log(taxonomies);
 
         taxonomies.map(({ node: taxonomy }) => {
           const { name, pathname, terms } = taxonomy;
