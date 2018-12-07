@@ -7,12 +7,12 @@ const responseLogger = (response, localPreviewToken) => {
     console.error(`${response}. 
 Update your local previewToken in gatsby-config.js to match your WP install.
 Or add this to your wp-config.php:
-      define('GATSBYPRESS_PRIVATE_KEY', '${localPreviewToken}');
+      define('WORDSBY_PRIVATE_KEY', '${localPreviewToken}');
     `);
-  } else if (response === "GATSBYPRESS_PRIVATE_KEY not defined") {
+  } else if (response === "WORDSBY_PRIVATE_KEY not defined") {
     console.error(`${response}. 
 Add this to your wp-config.php:
-      define('GATSBYPRESS_PRIVATE_KEY', '${localPreviewToken}');
+      define('WORDSBY_PRIVATE_KEY', '${localPreviewToken}');
     `);
   } else {
     console.log(response);
