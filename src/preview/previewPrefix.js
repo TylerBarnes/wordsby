@@ -1,5 +1,5 @@
 const previewPrefix = (prefix = "/") => {
-  const preview = process.env.GATSBYPRESS_PREVIEW;
+  const preview = process.env.WORDSBY_PREVIEW;
 
   return preview ? "/preview" : prefix;
 };

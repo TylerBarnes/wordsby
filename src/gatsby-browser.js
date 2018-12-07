@@ -11,4 +11,4 @@ exports.wrapPageElement = ({ element, props }) => {
 };
 
 exports.disableCorePrefetching = () =>
-  process.env.GATSBYPRESS_PREVIEW ? true : false;
+  process.env.WORDSBY_PREVIEW ? true : false;

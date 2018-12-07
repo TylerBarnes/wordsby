@@ -16,7 +16,7 @@ const generateAndUploadPreview = async () => {
   if (authorized !== "success") return;
 
   console.log("Generating preview site");
-  process.env["GATSBYPRESS_PREVIEW"] = true;
+  process.env["WORDSBY_PREVIEW"] = true;
   const gatsbyBuild = spawn("gatsby", ["build", "--prefix-paths"]);
 
   readline

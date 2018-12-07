@@ -22,7 +22,7 @@ exports.createPages = ({ actions, graphql }) => {
     throw `default template doesn't exist at ${defaultTemplate}`;
   }
 
-  const preview = process.env.GATSBYPRESS_PREVIEW;
+  const preview = process.env.WORDSBY_PREVIEW;
 
   if (preview) {
     // remove taxonomies from previews

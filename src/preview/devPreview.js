@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 const readline = require("readline");
 
 const devPreview = async () => {
-  process.env["GATSBYPRESS_PREVIEW"] = true;
+  process.env["WORDSBY_PREVIEW"] = true;
   const gatsbyDevelop = spawn("gatsby", ["develop"]);
 
   readline
