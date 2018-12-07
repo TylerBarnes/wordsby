@@ -1,5 +1,5 @@
 For now:
-    ☐ replace "gatsbypress" with "wordsby" everywhere
+    ✔ replace "gatsbypress" with "wordsby" everywhere @done(18-12-06 18:18)
     ☐ make menu, flexible content, and image components importable from wordsby
     ☐ add acf options endpoint
     ☐ fix wp menus
