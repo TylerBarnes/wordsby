@@ -1,7 +1,7 @@
 For now:
     ✔ replace "gatsbypress" with "wordsby" everywhere @done(18-12-06 18:18)
-    ☐ make menu, flexible content, and image components importable from wordsby
-    ☐ add acf options endpoint
+    ✔ add acf options endpoint @done(18-12-06 19:31)
+    ✔ change "dummy" to "schema builder" and make it visible @done(18-12-06 19:35)
     ☐ fix wp menus
     ☐ fix wp theme styles
     ☐ convert bare site to use wordsby
@@ -11,3 +11,4 @@ For now:
 
 For the future:
     ☐ create wordpress plugin that saves posts as markdown and commits them to the gatsby repo (basically the WP version of netlify cms)
+    ☐ make menu, flexible content, and image components importable from wordsby
