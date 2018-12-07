@@ -40,13 +40,13 @@ export default ({ slug: propSlug, children }) => {
           children ? (
             children(items)
           ) : (
-            <MenuItemStyles>
+            <>
               {items.map(item => (
                 <Link key={`menu-item-${item.wordpress_id}`} to={item.url}>
                   {item.title}
                 </Link>
               ))}
-            </MenuItemStyles>
+            </>
           )
         ) : (
           <h2>
