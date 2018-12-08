@@ -2,12 +2,13 @@ For now:
     ✔ replace "gatsbypress" with "wordsby" everywhere @done(18-12-06 18:18)
     ✔ add acf options endpoint @done(18-12-06 19:31)
     ✔ change "dummy" to "schema builder" and make it visible @done(18-12-06 19:35)
-    ☐ fix wp menus
+    ✔ fix wp menus @done(18-12-08 12:44)
+    ✔ test huge number of blog posts and images with wordsby and shared hosting @done(18-12-08 12:44)
     ☐ fix wp theme styles
     ☐ convert bare site to use wordsby
     ☐ create starter
-    ✔ test huge number of blog posts and images with wordsby and shared hosting @done(18-12-07 17:18)
     ☐ create readme
+    ☐ change previewtoken for all sites and put them in .env files
 
 For the future:
     ☐ create wordpress plugin that saves endpoints as json and commits them to the gatsby repo on post publish (basically the WP version of netlify cms)
