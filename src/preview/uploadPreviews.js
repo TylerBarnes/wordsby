@@ -26,18 +26,24 @@ const uploadPreviews = async () => {
   let bar;
   // get upload size
   form.getLength(function(err, size) {
-    bar = new ProgressBar("[:bar] :rate/bps :percent :etas", {
-      complete: "=",
-      incomplete: " ",
-      width: 40,
-      total: parseInt(size, 10)
-    });
+    if (size > 2000) {
+      bar = new ProgressBar("[:bar] :rate/bps :percent :etas", {
+        complete: "=",
+        incomplete: " ",
+        width: 40,
+        total: parseInt(size, 10)
+      });
+    } else {
+      bar = false;
+    }
   });
 
   // let uploaded = 0;
-  form.on("data", function(data) {
-    bar.tick(data.length);
-  });
+  if (bar) {
+    form.on("data", function(data) {
+      bar.tick(data.length);
+    });
+  }
 
   form.submit(uploader_url, function(err, res) {
     if (res.statusCode !== 200) {
