@@ -7,6 +7,8 @@ For now:
     ☐ fix wp theme styles
     ☐ convert bare site to use wordsby
     ☐ create starter
+    ☐ test psychic window
+    ☐ test schema builder
     ☐ create readme
     ☐ change previewtoken for all sites and put them in .env files
 
