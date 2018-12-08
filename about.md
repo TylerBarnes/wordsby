@@ -8,7 +8,7 @@ My avg download speed is 19mbps.
 
 ### Shared hosting
 
-Bluehost shared hosting seems to work fine up to 7000 posts.
+Bluehost shared hosting seems to work fine up to 7000 posts and no images.
 
 ### VPS
 
