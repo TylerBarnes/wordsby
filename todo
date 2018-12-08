@@ -4,7 +4,7 @@ For now:
     ✔ change "dummy" to "schema builder" and make it visible @done(18-12-06 19:35)
     ✔ fix wp menus @done(18-12-08 12:44)
     ✔ test huge number of blog posts and images with wordsby and shared hosting @done(18-12-08 12:44)
-    ☐ fix wp theme styles
+    ✔ fix wp theme styles @done(18-12-08 13:14)
     ☐ convert bare site to use wordsby
     ☐ create starter
     ☐ test psychic window
