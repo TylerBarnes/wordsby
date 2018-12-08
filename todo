@@ -6,9 +6,9 @@ For now:
     ☐ fix wp theme styles
     ☐ convert bare site to use wordsby
     ☐ create starter
-    ☐ test huge number of blog posts and images with wordsby and shared hosting
+    ✔ test huge number of blog posts and images with wordsby and shared hosting @done(18-12-07 17:18)
     ☐ create readme
 
 For the future:
-    ☐ create wordpress plugin that saves posts as markdown and commits them to the gatsby repo (basically the WP version of netlify cms)
+    ☐ create wordpress plugin that saves endpoints as json and commits them to the gatsby repo on post publish (basically the WP version of netlify cms)
     ☐ make menu, flexible content, and image components importable from wordsby
