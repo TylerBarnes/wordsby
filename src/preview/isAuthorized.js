@@ -31,9 +31,9 @@ const isAuthorized = async () => {
 
   const { wordpressconfig, private_key } = config;
 
-  console.log("Authorizing..");
-
   const wpUrl = `${wordpressconfig.protocol}://${wordpressconfig.baseUrl}`;
+  console.log(`Authorizing at ${wpUrl}..`);
+  console.log("...");
 
   const form = new FormData();
   form.append("gatsbypress_preview_keycheck", "true");

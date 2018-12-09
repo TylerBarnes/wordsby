@@ -1,6 +1,6 @@
 {
   "name": "wordsby",
-  "version": "0.4.7",
+  "version": "0.4.11",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -8,9 +8,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "copy-npm-files": "cp -rf package.json lib && cp -rf readme.md lib",
+    "copy-npm-files": "cp -rf package.json ./lib/ && cp -rf readme.md ./lib/",
     "clean-lib": "node_modules/.bin/rimraf ./lib",
-    "build": "rm -rf src/package.json src/node_modules src/yarn.lock || true && yarn clean-lib && babel src --out-dir lib --ignore __tests__ && yarn copy-npm-files"
+    "build": "rm -rf src/package.json src/node_modules src/yarn.lock || true && yarn clean-lib && babel src --out-dir lib --ignore __tests__ && yarn copy-npm-files",
+    "watch": "npm run clean-lib && mkdir lib && npm run copy-npm-files && babel -w src --out-dir lib --ignore __tests__"
   },
   "author": "Tyler Barnes",
   "license": "ISC",

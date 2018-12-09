@@ -35,6 +35,12 @@ exports.createPages = ({ actions, graphql }) => {
         wordpressWpCollections {
           wordpress_id
         }
+
+        site {
+          siteMetadata {
+            siteUrl
+          }
+        }
       }
     `)
       .then(result => {
@@ -42,6 +48,14 @@ exports.createPages = ({ actions, graphql }) => {
           result.errors.forEach(e => console.error(e.toString()));
           return Promise.reject(result.errors);
         }
+
+        const {
+          data: {
+            site: {
+              siteMetadata: { siteUrl }
+            }
+          }
+        } = result;
 
         _.each(existingTemplateFiles, template => {
           const indexOfFilename = template.lastIndexOf("/");
@@ -66,7 +80,9 @@ exports.createPages = ({ actions, graphql }) => {
             component: template,
             context: {
               id: result.data.wordpressWpCollections.wordpress_id,
-              preview: true
+              preview: true,
+              env: process.env.NODE_ENV,
+              siteUrl: siteUrl
             }
           });
         });

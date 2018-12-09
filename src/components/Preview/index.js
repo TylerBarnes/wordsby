@@ -32,8 +32,14 @@ export default class Preview extends Component {
       });
     }
 
-    // const rest_url = `http://temperance.online/wp-json/wp/v2/${rest_base}/${post_id}/preview`;
-    const rest_url = `/wp-json/wp/v2/${rest_base}/${post_id}/preview/?_wpnonce=${nonce}`;
+    console.log("preview props", this.props);
+    const { siteUrl, env } = this.props.pageContext;
+    console.log("site url", siteUrl);
+    console.log(env);
+
+    const rest_url = `${siteUrl}/wp-json/wp/v2/${rest_base}/${post_id}/preview/${
+      env !== "development" ? `?_wpnonce=${nonce}` : ""
+    }`;
 
     console.log(rest_url);
 
@@ -66,18 +72,25 @@ export default class Preview extends Component {
             }
           });
         }
-      });
+      })
+      .catch(error => console.warn(error));
   }
   render() {
     const {
-      props: { children }
+      props: {
+        children,
+        data: { wordpressWpCollections, ...rest }
+      }
     } = this;
 
     if (this.state.previewData && typeof window !== "undefined") {
       const childrenWithPreview = React.Children.map(children, child => {
         return React.cloneElement(child, {
-          data: { wordpressWpCollections: this.state.previewData },
-          previewData: { wordpressWpCollections: this.state.previewData }
+          data: { wordpressWpCollections: this.state.previewData, ...rest },
+          previewData: {
+            wordpressWpCollections: this.state.previewData,
+            ...rest
+          }
         });
       });
 
