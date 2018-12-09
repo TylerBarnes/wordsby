@@ -8,8 +8,12 @@ const Wimg = ({ field, ...props }) => {
 
   const { localFile: file } = field;
 
-  if (typeof field === "string") {
-    return <img src={field} {...props} />;
+  const useStringUrl = typeof field === "string";
+  const useNestedStringUrl = !!field.url && typeof field.url === "string";
+
+  if (useStringUrl || useNestedStringUrl) {
+    const stringUrl = useStringUrl ? field : field.url;
+    return <img src={stringUrl} {...props} />;
   } else if (!!file && file.childImageSharp) {
     if (file.childImageSharp.fluid) {
       return <Img fluid={file.childImageSharp.fluid} {...props} />;
