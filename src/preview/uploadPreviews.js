@@ -39,11 +39,11 @@ const uploadPreviews = async () => {
   });
 
   // let uploaded = 0;
-  if (bar) {
-    form.on("data", function(data) {
+  form.on("data", function(data) {
+    if (bar) {
       bar.tick(data.length);
-    });
-  }
+    }
+  });
 
   form.submit(uploader_url, function(err, res) {
     if (res.statusCode !== 200) {
