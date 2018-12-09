@@ -227,8 +227,6 @@ exports.createPages = ({ actions, graphql }) => {
       if (weShouldGenerateTaxonomyPages) {
         const taxonomies = result.data.allWordpressWpTaxTerms.edges;
 
-        console.log(taxonomies);
-
         taxonomies.map(({ node: taxonomy }) => {
           const { name, pathname, terms } = taxonomy;
           const template = `${templatesPath}/taxonomy/archive/${name}.${componentFileType}`;
