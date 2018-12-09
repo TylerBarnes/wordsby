@@ -1,5 +1,8 @@
 # Wordsby (ALPHA)
 
+Wordsby is a meta-framework for Gatsbyjs.
+It is an opinionated way for building Gatsby/WordPress sites in order to fill in some of the missing holes between Gatsby and WordPress.
+
 The goal of this project is to make it as easy as possible for WP web shops to switch from WordPress development to Gatsby development with absolutely no compromises. I built this so I could migrate the WP webshop I work at to full Gatsby/React as there were originally too many compromises for us to use Gatsby.
 
 ## Main Features
@@ -28,17 +31,23 @@ The goal of this project is to make it as easy as possible for WP web shops to s
 - https://bare.ca
 - https://transitionlink.tylerbarnes.ca
 
+## Requirements
+
+1. A little Gatsby and WordPress knowledge, you shouldn't need a ton about each.
+2. ACF Pro license. The admin theme will automatically download a copy of ACF pro from github but you need to buy a license to legally use it in production.
+3. npm or yarn
+
 ## Set up
 
-1. Install wordsby cli with `npm i -g wordsby` or `yarn global add wordsby`
+1. Install Wordsby cli with `npm i -g wordsby` or `yarn global add wordsby`
 2. Install Wordsby Admin, the WordPress admin theme (This is required to use Wordsby).
-3. Download Wordsby Frontend, the Gatsby Wordsby starter (Not 100% required but highly recommended, alternatively make your own starter).
-
-## WordPress admin template dropdown
+3. Download Wordsby Forwords, the Gatsby/Wordsby starter (Not 100% required but highly recommended, alternatively make your own starter).
 
 ## Template Hierarchy
 
 ## Templates
+
+## WordPress admin template dropdown
 
 ## Permalink / Path structure
 
