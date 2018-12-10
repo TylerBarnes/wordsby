@@ -43,6 +43,8 @@ The goal of this project is to make it as easy as possible for WP web shops to s
 2. Install Wordsby Admin, the WordPress admin theme (This is required to use Wordsby).
 3. Download Wordsby Forwords, the Gatsby/Wordsby starter (Not 100% required but highly recommended, alternatively make your own starter).
 
+## TOC
+
 ## Template Hierarchy
 
 ## Templates
