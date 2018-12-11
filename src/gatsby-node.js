@@ -17,6 +17,7 @@ createTemplatesJson({ existingTemplateFiles, templatesPath });
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions;
+  let wpMenu;
 
   if (!fs.existsSync(defaultTemplate)) {
     throw `default template doesn't exist at ${defaultTemplate}`;
@@ -41,6 +42,18 @@ exports.createPages = ({ actions, graphql }) => {
             siteUrl
           }
         }
+        allWordpressWpApiMenusMenusItems {
+          edges {
+            node {
+              slug
+              items {
+                title
+                url
+                wordpress_id
+              }
+            }
+          }
+        }
       }
     `)
       .then(result => {
@@ -53,7 +66,8 @@ exports.createPages = ({ actions, graphql }) => {
           data: {
             site: {
               siteMetadata: { siteUrl }
-            }
+            },
+            allWordpressWpApiMenusMenusItems: wpMenu
           }
         } = result;
 
@@ -82,7 +96,8 @@ exports.createPages = ({ actions, graphql }) => {
               id: result.data.wordpressWpCollections.wordpress_id,
               preview: true,
               env: process.env.NODE_ENV,
-              siteUrl: siteUrl
+              siteUrl: siteUrl,
+              wpMenu: wpMenu
             }
           });
         });
@@ -126,6 +141,25 @@ exports.createPages = ({ actions, graphql }) => {
           }
         }
       }
+
+      site {
+        siteMetadata {
+          siteUrl
+        }
+      }
+
+      allWordpressWpApiMenusMenusItems {
+        edges {
+          node {
+            slug
+            items {
+              title
+              url
+              wordpress_id
+            }
+          }
+        }
+      }
     }
   `)
     .then(result => {
@@ -133,6 +167,15 @@ exports.createPages = ({ actions, graphql }) => {
         result.errors.forEach(e => console.error(e.toString()));
         return Promise.reject(result.errors);
       }
+
+      const {
+        data: {
+          site: {
+            siteMetadata: { siteUrl }
+          },
+          allWordpressWpApiMenusMenusItems: wpMenu
+        }
+      } = result;
 
       const posts = result.data.allWordpressWpCollections.edges.filter(
         ({ node: post }) => post.post_type !== "schema_builder"
@@ -175,7 +218,9 @@ exports.createPages = ({ actions, graphql }) => {
               context: {
                 archive: true,
                 id: post.node.wordpress_id,
-                post_type: post.node.acf.post_type
+                post_type: post.node.acf.post_type,
+                siteUrl: siteUrl,
+                wpMenu: wpMenu
               }
             });
           } else {
@@ -207,7 +252,9 @@ exports.createPages = ({ actions, graphql }) => {
                 nextPost:
                   typeof posts[index + 1] !== "undefined"
                     ? posts[index + 1].node
-                    : {}
+                    : {},
+                siteUrl: siteUrl,
+                wpMenu: wpMenu
               }
             });
           } else {
@@ -249,7 +296,9 @@ exports.createPages = ({ actions, graphql }) => {
               component: usedTemplate,
               context: {
                 taxonomy_slug: name,
-                terms: terms
+                terms: terms,
+                siteUrl: siteUrl,
+                wpMenu: wpMenu
               }
             });
           }
@@ -273,7 +322,12 @@ exports.createPages = ({ actions, graphql }) => {
                 createPage({
                   path: pathname,
                   component: usedTemplate,
-                  context: { slug: slug, wordpress_id: wordpress_id }
+                  context: {
+                    slug: slug,
+                    wordpress_id: wordpress_id,
+                    siteUrl: siteUrl,
+                    wpMenu: wpMenu
+                  }
                 });
               }
             });
