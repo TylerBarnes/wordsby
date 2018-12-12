@@ -10,7 +10,8 @@ const wordsby = async () => {
   if (!isGatsby()) return;
 
   program
-    .option("preview", "Generate a preview and upload it to WP")
+    .option("preview", "Generate a preview build and upload it to WP")
+    .option("preview-local", "Generate a preview zip locally for manual upload")
     .option("test", "Start gatsby develop in preview mode.")
     .option("templates", "Send templates to the WP template picker.")
     .parse(process.argv);
@@ -18,7 +19,9 @@ const wordsby = async () => {
   if (program.test) {
     return devPreview();
   } else if (program.preview) {
-    return generateAndUploadPreview();
+    return generateAndUploadPreview({ skipUpload: false });
+  } else if (program.previewLocal) {
+    return generateAndUploadPreview({ skipUpload: true });
   } else if (program.templates) {
     return generateAndUploadTemplates();
   } else {
