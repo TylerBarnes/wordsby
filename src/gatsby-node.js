@@ -115,6 +115,7 @@ exports.createPages = ({ actions, graphql }) => {
         edges {
           node {
             name
+            label
             pathname
             terms {
               slug
@@ -228,7 +229,7 @@ exports.createPages = ({ actions, graphql }) => {
         const taxonomies = result.data.allWordpressWpTaxTerms.edges;
 
         taxonomies.map(({ node: taxonomy }) => {
-          const { name, pathname, terms } = taxonomy;
+          const { name, pathname, terms, label } = taxonomy;
           const template = `${templatesPath}/taxonomy/archive/${name}.${componentFileType}`;
 
           let usedTemplate;
@@ -249,6 +250,7 @@ exports.createPages = ({ actions, graphql }) => {
               component: usedTemplate,
               context: {
                 taxonomy_slug: name,
+                taxonomy_name: label,
                 terms: terms
               }
             });
@@ -256,7 +258,7 @@ exports.createPages = ({ actions, graphql }) => {
 
           terms &&
             terms.map(term => {
-              const { pathname, taxonomy, slug, wordpress_id } = term;
+              const { pathname, taxonomy, slug, name, wordpress_id } = term;
 
               const template = `${templatesPath}/taxonomy/single/${taxonomy}.${componentFileType}`;
 
@@ -273,7 +275,11 @@ exports.createPages = ({ actions, graphql }) => {
                 createPage({
                   path: pathname,
                   component: usedTemplate,
-                  context: { slug: slug, wordpress_id: wordpress_id }
+                  context: {
+                    label: name,
+                    slug: slug,
+                    wordpress_id: wordpress_id
+                  }
                 });
               }
             });
