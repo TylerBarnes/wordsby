@@ -1,18 +1,12 @@
 # Wordsby (WIP)
+The goal of this project is to make it as easy as possible for WP web shops to switch from WordPress development to Gatsby development with absolutely no compromises. I built this so I could migrate the WP webshop I work at to full Gatsby/React as there were originally too many compromises and too much friction for us to use Gatsby.
 
-Wordsby is a toolset for building Gatsbyjs sites with WordPress.
-It is an opinionated way for building Gatsby/WordPress sites in order to fill in some of the missing holes when integrating Gatsby with WordPress.
-
-The goal of this project is to make it as easy as possible for WP web shops to switch from WordPress development to Gatsby development with absolutely no compromises. I built this so I could migrate the WP webshop I work at to full Gatsby/React as there were originally too many compromises for us to use Gatsby.
-
-I'm currently using Wordsby in production with no problems, even though it's a WIP.
-
-**NOTE:** Currently wordsby just works with plain .js files. .jsx and .ts files don't work yet.
+**NOTE:** I'm using Wordsby in production with no problems, even though it's a WIP. Currently wordsby just works with plain .js files. .jsx, .tsx and .ts files don't work yet.
 
 ## Sites built with Wordsby
 
-- transitionlink.tylerbarnes.ca
-- bare.ca
+- [TransitionLink](https://transitionlink.tylerbarnes.ca)
+- [Bare](https://bare.ca)
 
 ## Main Features
 
@@ -25,7 +19,7 @@ I'm currently using Wordsby in production with no problems, even though it's a W
 - Edit page permalinks point to your actual Gatsby frontend
 - Any post or page can become an archive page with pagination via a checkbox on each post/page edit screen
 - Taxonomy term and archive pages are built automatically if there is a template for them in gatsby
-- Access to previous / next post names and links via page context for every gatsby page
+- Page context contains previous / next post names and links relative to the current page
 - Schema builder to build out your graphql schema and prevent the missing data bug in gatsby that breaks your build when you're missing acf flexible content fields, one post of every post type, and one category.
 
 ### Bonus features:
@@ -47,15 +41,15 @@ I'm currently using Wordsby in production with no problems, even though it's a W
 ## Set up
 
 1. Install Wordsby cli with `npm i -g wordsby` or `yarn global add wordsby`
-2. Install Wordsby Admin, the WordPress admin theme (This is required to use Wordsby).
-3. Download the Wordsby Starter (Not 100% required but highly recommended, alternatively fork it and make your own starter).
+2. Install [Wordsby Admin](https://github.com/TylerBarnes/wordsby-admin), the WordPress admin theme (This is required to use Wordsby).
+3. Install the [Wordsby Starter](https://github.com/TylerBarnes/wordsby-starter) (Not 100% required but highly recommended, alternatively fork it and make your own starter).
 4. Run `wordsby templates` to generate a json file of templates to upload to your WP install. The command will walk you through the setup for that (for now, run it a few times and fix the errors it brings up until it's setup fully).
 
 ## CLI Commands
 
 - `wordsby templates` generates a list of templates and sends it to your WP install template dropdown. Note that running this command will delete any previews currently uploaded to your WP install. This command is useful for first time setup.
-- `wordsby preview` generates a preview build of your site and sends it to your WP install. It also sends template data to your WP install.
-- `wordsby preview-local` generates a preview build and saves it as a zip locally for manual upload to your WP install (at public_html/preview)
+- `wordsby preview` generates a preview build of your site and POSTS's it to your WP install. It also sends template data to your WP install.
+- `wordsby preview-local` generates a preview build and saves it as a zip locally for manual upload to your WP install (at public_html/preview) in case you can't increase the `max_post_size` on your server
 - `wordsby test` generates a preview build of your site locally for debugging preview templates
 
 ## Permalink / Path Structure
@@ -63,7 +57,7 @@ I'm currently using Wordsby in production with no problems, even though it's a W
 Wordsby uses the WP permalink structure you've set up in your WP install. The base url is stripped from all links and the leftover pathname is used to create Gatsby pages. This means any regular WP internal links or menus will just work out of the box.
 
 ## One "collections" endpoint for all Pages, posts, and custom post types
-
+Instead of an endpoint for each post type, Wordsby puts all post types and pages onto a single endpoint.
 It's available at `wp-json/wp/v1/collections`.
 
 Query it like so:
@@ -105,9 +99,13 @@ Using the default template in WP admin will cause wordsby to grab the `src/templ
 
 Setting another template from the dropdown will make wordsby check for `src/templates/[template-name].js` and fallback to `src/templates/index.js`.
 
-Note that single pages and posts don't look for an index.js in that directory. It will just use the `src/templates/index.js` file
-
 Make sure you create a basic index.js to prevent your site from being broken by admins.
+
+### Single Page and Post type template hierarchy
+
+To create a template for a post type, add it to `src/templates/single/[post_type].js` and set the post to use the default template.
+If there is nothing found there, Wordsby will use the default Gatsby template at `src/templates/index.js`.
+If you set your post to a template besides "Default Template" in wp admin, the hierarchy in the last section applies.
 
 ### Archive page template hierarchy
 
@@ -191,10 +189,13 @@ For more control use children as a function to get the menu items:
 
 ## Previews
 
-Wordsby builds a separate version of your site to make previews possible.
-It loops through all your templates and builds a page for each, then zips the public folder and POST's it to your WP install. Each template is wrapped in a preview component which feeds live REST api data to your templates. Click "Preview" in WP admin as usual to get a live preview.
+Previews are generated and POST'd to your WP install by using wordsby cli.
+Run `wordsby preview` in your project to send up your preview build.
 
-Note that each template will just use the first page or post Wordsby finds. This means you have to be sure that missing data wont break your build but it will be obvious if it does.
+Wordsby builds a separate version of your site to make previews possible.
+It loops through all your templates and builds a page for each, then zips the public folder and POST's it to your WP install. Each template is wrapped in a preview component which feeds live REST api data to your templates. Click "Preview" in WP admin to get a live preview.
+
+Note that each template will just use the first page or post Wordsby finds during `gatsby build`. This means you have to be sure that missing data wont break your build but it will be obvious if it does.
 
 ### Wordsby Img
 
@@ -207,6 +208,8 @@ import { Img } from "wordsby-components";
 Query as if you were using the regular Gatsby Img component but pass in the entire field structure instead of passing fluid or fixed.
 
 ```graphql
+query {
+...
 image {
         localFile {
         childImageSharp {
@@ -215,6 +218,8 @@ image {
             }
         }
     }
+}
+...
 }
 ```
 
