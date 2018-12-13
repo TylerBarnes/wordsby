@@ -3,6 +3,8 @@ The goal of this project is to make it as easy as possible for WP web shops to s
 
 **NOTE:** I'm using Wordsby in production with no problems, even though it's a WIP. Currently wordsby just works with plain .js files. .jsx, .tsx and .ts files don't work yet.
 
+![Wordsby logo](wordsby-logo.png?raw=true "Wordsby Admin logo")
+
 ## Sites built with Wordsby
 
 - [TransitionLink](https://transitionlink.tylerbarnes.ca)
