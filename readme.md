@@ -50,7 +50,7 @@ The goal of this project is to make it as easy as possible for WP web shops to s
 ## CLI Commands
 
 - `wordsby templates` generates a list of templates and sends it to your WP install template dropdown. Note that running this command will delete any previews currently uploaded to your WP install. This command is useful for first time setup.
-- `wordsby preview` generates a preview build of your site and POSTS's it to your WP install. It also sends template data to your WP install.
+- `wordsby preview` generates a preview build of your site and POST's it to your WP install. It also sends template data to your WP install.
 - `wordsby preview-local` generates a preview build and saves it as a zip locally for manual upload to your WP install (at public_html/preview) in case you can't increase the `max_post_size` on your server
 - `wordsby test` generates a preview build of your site locally for debugging preview templates
 
