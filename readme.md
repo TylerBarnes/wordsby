@@ -264,17 +264,61 @@ Removing all posts or querying ACF flexible content that isn't set on one post w
 
 You can build your schema from the WP backend by going to `Development->Schema Builder`
 
-## WordPress forms integration (PHP in JS??)
+## WordPress plugins integration
+
+Because transitioning from WP to Gatsby means you lose out on the good / easy parts of WP, Wordsby includes a component (PsychicWindow) for displaying iframes of WP content using [`post-robot`](https://github.com/krakenjs/post-robot) by PayPal.
+
+Our `<PyschicWindow />` component sends CSS to the iframe via `post-robot` and it receives the full height of the iframe contents back. Because we have the exact height of the iframe, there are no scrollbars and the form, comments section, or other plugin bit blends seamlessly with your Gatsby site.
+Children of this component are for displaying a placeholder while the iframe loads.
+
+1. Go to `Development->Psychic Window` in the WP admin area.
+2. Create a post using some kind of form or other shortcode
+3. Copy the url to your PsychicWindow and use it in your Gatsby project
+
+```jsx
+import { PsychicWindow } from "wordsby-components";
+```
+
+```jsx
+<PsychicWindow url="http://wordsby.test/psychic-window/contact-form-7-example/">
+  <PlaceholderComponent />
+</PsychicWindow>
+```
+
+Pass CSS to your iframe
+
+```jsx
+<PsychicWindow
+  url="http://wordsby.test/psychic-window/contact-form-7-example/"
+  windowCSS={`
+        html {
+          background: rebeccapurple;
+        }
+        `}
+>
+  <PlaceholderComponent />
+</PsychicWindow>
+```
 
 ## Endpoints
 
+...to be written.
+
 ## graphql
+
+...to be written.
 
 ## WP Tweaks
 
+...to be written.
+
 ### BetterAdmin
 
+...to be written.
+
 ### AlwaysAvatars
+
+...to be written.
 
 ## Testing / Rough benchmarks
 
