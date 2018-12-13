@@ -1,94 +1,270 @@
-# Wordsby (ALPHA)
+# Wordsby (WIP)
 
-Wordsby is a meta-framework for Gatsbyjs.
-It is an opinionated way for building Gatsby/WordPress sites in order to fill in some of the missing holes between Gatsby and WordPress.
+Wordsby is a toolset for building Gatsbyjs sites with WordPress.
+It is an opinionated way for building Gatsby/WordPress sites in order to fill in some of the missing holes when integrating Gatsby with WordPress.
 
 The goal of this project is to make it as easy as possible for WP web shops to switch from WordPress development to Gatsby development with absolutely no compromises. I built this so I could migrate the WP webshop I work at to full Gatsby/React as there were originally too many compromises for us to use Gatsby.
+
+I'm currently using Wordsby in production with no problems, even though it's a WIP.
+
+**NOTE:** Currently wordsby just works with plain .js files. .jsx and .ts files don't work yet.
+
+## Sites built with Wordsby
+
+- transitionlink.tylerbarnes.ca
+- bare.ca
 
 ## Main Features
 
 - Instant previews from WP admin for all post types
 - Easy integration with WordPress forms, comments, and any other WP plugin.
-- WP menus just work
 - WP permalink structure is used for Gatsby pathnames & links
-- WP post/page template dropdown is connected to Gatsby (and vice versa)
-- Gatsby template hierarchy with default template support so editors and admins can't break the build
+- WP menus work
+- WP post/page template dropdown is connected to Gatsby
+- Basic template hierarchy with default template support so editors and admins can't break the build
 - Edit page permalinks point to your actual Gatsby frontend
 - Any post or page can become an archive page with pagination via a checkbox on each post/page edit screen
 - Taxonomy term and archive pages are built automatically if there is a template for them in gatsby
-- Access to previous / next post names and links via page context for every gatsby page (respects ascending WP menu order, then date order)
+- Access to previous / next post names and links via page context for every gatsby page
 - Schema builder to build out your graphql schema and prevent the missing data bug in gatsby that breaks your build when you're missing acf flexible content fields, one post of every post type, and one category.
 
 ### Bonus features:
 
-- Improved WP admin theme (no more super long WP admin left menu)
+- Improved WP admin theme
 - Automatic unsplash nature avatars for all users
-- Faster `gatsby develop` (about 30s faster for me)
+- Faster `gatsby develop` for small to medium sized sites
 - ACF-to-REST plugin is not needed as ACF support is built in
+
+### Future plans:
+
+- WP endpoints and media files will be commited directly to your Gatsby repo like netlify CMS.
 
 ## Sites built with Wordsby
 
-- https://bare.ca
 - https://transitionlink.tylerbarnes.ca
-
-## Requirements
-
-1. A little Gatsby and WordPress knowledge, you shouldn't need a ton about each.
-2. ACF Pro license. The admin theme will automatically download a copy of ACF pro from github but you need to buy a license to legally use it in production.
-3. npm or yarn
+- https://bare.ca
 
 ## Set up
 
 1. Install Wordsby cli with `npm i -g wordsby` or `yarn global add wordsby`
 2. Install Wordsby Admin, the WordPress admin theme (This is required to use Wordsby).
-3. Download Wordsby Forwords, the Gatsby/Wordsby starter (Not 100% required but highly recommended, alternatively make your own starter).
-
-## TOC
-
-## Template Hierarchy
-
-## Templates
-
-## WordPress admin template dropdown
-
-## Permalink / Path structure
-
-## Menus
+3. Download the Wordsby Starter (Not 100% required but highly recommended, alternatively fork it and make your own starter).
+4. Run `wordsby templates` to generate a json file of templates to upload to your WP install. The command will walk you through the setup for that (for now, run it a few times and fix the errors it brings up until it's setup fully).
 
 ## CLI Commands
 
-- `wordsby preview`
-  - This generates a preview build of your site and sends it to your WP install
-- `wordsby test`
-  - This generates a preview build of your site locally for debugging
-- `wordsby templates`
-  - This generates a list of templates and sends it to your WP install
+- `wordsby templates` generates a list of templates and sends it to your WP install template dropdown. Note that running this command will delete any previews currently uploaded to your WP install. This command is useful for first time setup.
+- `wordsby preview` generates a preview build of your site and sends it to your WP install. It also sends template data to your WP install.
+- `wordsby preview-local` generates a preview build and saves it as a zip locally for manual upload to your WP install (at public_html/preview)
+- `wordsby test` generates a preview build of your site locally for debugging preview templates
+
+## Permalink / Path Structure
+
+Wordsby uses the WP permalink structure you've set up in your WP install. The base url is stripped from all links and the leftover pathname is used to create Gatsby pages. This means any regular WP internal links or menus will just work out of the box.
+
+## One "collections" endpoint for all Pages, posts, and custom post types
+
+It's available at `wp-json/wp/v1/collections`.
+
+Query it like so:
+
+```graphql
+query HomeTemplate($id: Int!) {
+  wordpressWpCollections(wordpress_id: { eq: $id }) {
+    post_title
+  }
+}
+```
+
+or
+
+```graphql
+query BlogTemplate($post_type: String!) {
+  allWordpressWpCollections(filter: { post_type: { eq: $post_type } }) {
+    edges {
+      node {
+        post_title
+      }
+    }
+  }
+}
+```
+
+## Templates
+
+Templates are named in WP by replacing underscores and dashes from the filename with spaces.
+`template-name.js` in gatsby becomes `Template name` in WP.
+
+## Template Hierarchy
+
+For the most part the WP template hierarchy is overkill. Wordsby just includes a few parts of a hierarchy to make dev easier. This will likely be expanded a bit as the project evolves.
+
+### Pages, posts, and custom post types template hierarchy
+
+Using the default template in WP admin will cause wordsby to grab the `src/templates/index.js` file.
+
+Setting another template from the dropdown will make wordsby check for `src/templates/[template-name].js` and fallback to `src/templates/index.js`.
+
+Note that single pages and posts don't look for an index.js in that directory. It will just use the `src/templates/index.js` file
+
+Make sure you create a basic index.js to prevent your site from being broken by admins.
+
+### Archive page template hierarchy
+
+To set up an archive page:
+
+- Go to the page/post that you want to make an archive
+- Check the archive metabox on the page or post you want to be an archive page
+- Set the posts per page, and post type in the same metabox.
+
+Wordsby will look for `src/templates/archive/[post_type_slug].js`. If it isn't found, it will grab `src/templates/archive/index.js`.
+
+### Taxonomy archive template hierarchy
+
+If you don't have a `src/templates/taxonomy` directory, Wordsby will not generate taxonomy archives or term pages.
+
+If you have a taxonomy folder, Wordsby will look for `src/templates/taxonomy/archive/[taxonomy_name].js`. If it isn't found it'll grab `src/templates/taxonomy/archive/index.js`
+
+If you're creating taxonomy archive or term pages, be sure to include an index.js to prevent your site from being breakable by admins.
+
+### Taxonomy term template hierarchy
+
+The rules surrounding the taxonomy directory are the same as above.
+
+If you have a taxonomy folder, Wordsby will look for `src/templates/taxonomy/single/[taxonomy_name].js`. If it isn't found it'll grab `src/templates/taxonomy/single/index.js`
+
+### Here's a directory overview of what you just read
+
+```bash
+├──src/
+│   ├── templates/
+│   │   ├── index.js
+│   │   ├── home.js
+│   │   ├── archive/
+│   │   │   ├── index.js
+│   │   │   ├── post.js
+│   │   ├── single/
+│   │   │   ├── page.js
+│   │   │   ├── custom_post_type.js
+│   │   ├── taxonomy/
+│   │   │   ├── archive/
+│   │   │   │   ├── index.js
+│   │   │   │   ├── taxonomy_name.js
+│   │   │   ├── single/
+│   │   │   │   ├── index.js
+│   │   │   │   ├── taxonomy_name.js
+└────────────────────────────────
+```
+
+## WordPress admin template dropdown
+
+The dropdown here is populated from a json file that's sent to your WP install by running `wordsby templates` or `wordsby preview`.
+
+## Menus
+
+The plugin `WP API Menus` is force installed with TGM plugin activator.
+You can call menus by their slug using the Wordsby component `<MenuItems />`
+
+```jsx
+import MenuItems from "../wordsby/MenuItems";
+```
+
+For simplicity you can use `<MenuItems slug="slug-name" />` to return a group of gatsby links wrapped in `<li>` tags.
+
+For more control use children as a function to get the menu items:
+
+```jsx
+<MenuItems slug="main-menu">
+  {items => {
+    return items.map(({ url, active, activeParent, title }) => (
+      <Link
+        key={url}
+        to={url}
+        className={active || activeParent ? "active" : ""}
+      >
+        {title}
+      </Link>
+    ));
+  }}
+</MenuItems>
+```
 
 ## Previews
 
-### Wordsby Img (WImg?)
+Wordsby builds a separate version of your site to make previews possible.
+It loops through all your templates and builds a page for each, then zips the public folder and POST's it to your WP install. Each template is wrapped in a preview component which feeds live REST api data to your templates. Click "Preview" in WP admin as usual to get a live preview.
+
+Note that each template will just use the first page or post Wordsby finds. This means you have to be sure that missing data wont break your build but it will be obvious if it does.
+
+### Wordsby Img
+
+You need to use Wordsby Img to make images show up in previews. Because the previews use live REST api data, they wont have any graphql magic. Wordsby Img checks the field you've passed in to see if it has a fluid or fixed gatsby-image query. If it does it adds the Gatsby Img component. If it doesn't, it passes through the field image URL of the hi-res image to an img tag wrapped in some markup/styles that emulate Gatsby Img.
+
+```jsx
+import { Img } from "wordsby-components";
+```
+
+Query as if you were using the regular Gatsby Img component but pass in the entire field structure instead of passing fluid or fixed.
+
+```graphql
+image {
+        localFile {
+        childImageSharp {
+            fixed(width: 136, quality: 100) {
+            ...GatsbyImageSharpFixed_withWebp_tracedSVG
+            }
+        }
+    }
+}
+```
+
+```jsx
+<Img field={image} />
+```
 
 ## Debugging previews
 
-1. Add `define('DANGEROUS__WORDSBY_PUBLIC_PREVIEWS', true);` to your wp config.
+If you're having issues with your previews you can debug with the following steps.
+
+1. Add `define('DANGEROUS__WORDSBY_PUBLIC_PREVIEWS', true);` to your wp-config.php.
 2. Run `wordsby test` in your project.
 3. Open your WordPress site and click preview from the post you want to debug
 4. Backspace everything in the url from the forward slash after "/preview/" and replace it with `localhost:8000/`
 5. Check your console for debugging info
+6. Once you're finished, remove `define('DANGEROUS__WORDSBY_PUBLIC_PREVIEWS', true);` from your wp-config.php.
 
 ## Acf options
 
-## Archives & pagination
+Wordsby has built in ACF options page support at the endpoint `/wp-json/wp/v1/all-options`.
+
+In graphql, all options will be accessible at the root level, not grouped by options page.
 
 ## Next / Prev posts
 
+All single pages receive pageContext containing the next / previous post. The data contains post type, pathname, page title, and wordpress ID.
+
+For next / prev posts links in a blog you can access this data and just check if the links are of the same post type of the current page to only show next / prev links within a post type.
+
+```jsx
+{
+  !!nextPost && nextPost.post_type === "case_study" && (
+    <Link to={nextPost.pathname}>{nextPost.post_title}</Link>
+  );
+}
+```
+
 ## Taxonomies
+
+Check the template hierarchy info above for more information on templating.
+All posts / pages will have a list of taxonomies and terms attached to them along with a pathname / term title for linking.
 
 ## Schema Builder
 
-## WordPress forms integration (PHP in JS??)
+Removing all posts or querying ACF flexible content that isn't set on one post will usually break a Gatsby site's build. Schema builder is a post type where you can fill all the fields you want to be part of your schema wether they exist yet or not. This post type is filtered out and pages aren't created for it. If you query for all post types at once, you'll need to filter it out yourself.
 
-Psychic Window
+You can build your schema from the WP backend by going to `Development->Schema Builder`
+
+## WordPress forms integration (PHP in JS??)
 
 ## Endpoints
 
