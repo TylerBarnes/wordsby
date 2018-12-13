@@ -1,7 +1,4 @@
 # Wordsby (WIP)
-
-Wordsby is a toolset for building Gatsbyjs sites with WordPress.
-
 The goal of this project is to make it as easy as possible for WP web shops to switch from WordPress development to Gatsby development with absolutely no compromises. I built this so I could migrate the WP webshop I work at to full Gatsby/React as there were originally too many compromises and too much friction for us to use Gatsby.
 
 **NOTE:** I'm using Wordsby in production with no problems, even though it's a WIP. Currently wordsby just works with plain .js files. .jsx, .tsx and .ts files don't work yet.
