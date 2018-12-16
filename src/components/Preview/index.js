@@ -86,9 +86,14 @@ export default class Preview extends Component {
     if (this.state.previewData && typeof window !== "undefined") {
       const childrenWithPreview = React.Children.map(children, child => {
         return React.cloneElement(child, {
-          data: { wordpressWpCollections: this.state.previewData, ...rest },
+          data: {
+            wordpressWpCollections: this.state.previewData,
+            wordsbyCollections: this.state.previewData,
+            ...rest
+          },
           previewData: {
             wordpressWpCollections: this.state.previewData,
+            wordsbyCollections: this.state.previewData,
             ...rest
           }
         });
