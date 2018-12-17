@@ -1,0 +1,11 @@
+{
+  "name": "gatsby-transformer-wordsby",
+  "version": "0.0.1",
+  "description": "A Gatsby transformer plugin for Wordsby/Wordpress local JSON",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tyler Barnes",
+  "license": "MIT"
+}
