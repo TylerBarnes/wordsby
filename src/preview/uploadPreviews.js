@@ -10,9 +10,7 @@ const uploadPreviews = async () => {
 
   if (!config) return false;
 
-  const { wordpressconfig, private_key } = config;
-
-  const wpUrl = `${wordpressconfig.protocol}://${wordpressconfig.baseUrl}`;
+  const { wpUrl, private_key } = config;
 
   const uploader_url = `${wpUrl}`;
 

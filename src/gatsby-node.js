@@ -15,7 +15,13 @@ let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
 
 createTemplatesJson({ existingTemplateFiles, templatesPath });
 
-exports.createPages = ({ actions, graphql }) => {
+exports.createPages = ({ actions, graphql }, options) => {
+  if (options.source === "gatsby-transformer-wordsby") {
+    // This is a temporary check.
+    // gatsby-source-wordpress support will be dropped soon in favour of gatsby-transformer-wordsby
+    return;
+  }
+
   const { createPage } = actions;
 
   if (!fs.existsSync(defaultTemplate)) {

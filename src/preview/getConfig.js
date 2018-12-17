@@ -14,20 +14,34 @@ const getConfig = () => {
     const config = importCwd("./gatsby-config");
     if (!config) return false;
 
-    const wordpressconfig = config.plugins.filter(
-      plugin => plugin.resolve === "gatsby-source-wordpress"
-    )[0].options;
     const gatsbypressconfig = config.plugins.filter(
       plugin => plugin.resolve === "wordsby"
-    )[0].options;
+    )[0];
 
-    if (!wordpressconfig) {
+    const wordpressconfig = config.plugins.filter(
+      plugin => plugin.resolve === "gatsby-source-wordpress"
+    )[0];
+
+    let wpUrl = false;
+    if (gatsbypressconfig.options && gatsbypressconfig.options.siteUrl) {
+      wpUrl = gatsbypressconfig.options.siteUrl;
+    } else if (wordpressconfig && wordpressconfig.options) {
+    }
+
+    if (!wpUrl) {
       throw Error(
-        `It looks like gatsby-source-wordpress is not installed or configured properly. This starter requires it to be added to gatsby-config.js before wordsby.`
+        `You'll need to add a siteUrl option to your wordsby options. 
+        {
+          resolve: 'wordsby',
+          options: {
+            siteUrl: [enter your WP url here],
+          },
+        },
+        `
       );
     }
 
-    const private_key = gatsbypressconfig.previewToken;
+    const private_key = gatsbypressconfig.options.previewToken;
 
     if (!gatsbypressconfig || !private_key) {
       throw Error(`You need to add a previewToken to your wordsby options. Try this:
@@ -57,9 +71,9 @@ const getConfig = () => {
       }
     }
 
-    if (wordpressconfig && gatsbypressconfig && private_key) {
+    if (wpUrl && gatsbypressconfig && private_key) {
       resolve({
-        wordpressconfig,
+        wpUrl,
         private_key
       });
     } else {

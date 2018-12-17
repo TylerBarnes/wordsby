@@ -35,23 +35,24 @@ export default class Preview extends Component {
     console.log("preview props", this.props);
     const { siteUrl, env } = this.props.pageContext;
     console.log("site url", siteUrl);
-    console.log(env);
+    console.log("env", env);
 
     const rest_url = `${siteUrl}/wp-json/wp/v2/${rest_base}/${post_id}/preview/${
       env !== "development" ? `?_wpnonce=${nonce}` : ""
     }`;
 
-    console.log(rest_url);
+    console.log("rest_url", rest_url);
 
     fetch(rest_url)
       .then(res => {
-        console.log(res);
+        console.log("response", res);
         return res.json();
       })
       .then(res => {
-        console.log(res);
+        console.log("json response", res);
 
         if (res && res.ID) {
+          console.log("Updating preview data");
           this.setState({ previewData: res });
         } else if (res && res.code) {
           this.setState({
@@ -79,7 +80,7 @@ export default class Preview extends Component {
     const {
       props: {
         children,
-        data: { wordpressWpCollections, ...rest }
+        data: { wordpressWpCollections, wordsbyCollections, ...rest }
       }
     } = this;
 
@@ -98,7 +99,7 @@ export default class Preview extends Component {
           }
         });
       });
-
+      console.log(childrenWithPreview);
       return childrenWithPreview;
     } else {
       return <PreviewLoader error={this.state.error} />;

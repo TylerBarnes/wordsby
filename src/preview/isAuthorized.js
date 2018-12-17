@@ -29,9 +29,8 @@ const isAuthorized = async () => {
 
   if (!config) return;
 
-  const { wordpressconfig, private_key } = config;
+  const { wpUrl, private_key } = config;
 
-  const wpUrl = `${wordpressconfig.protocol}://${wordpressconfig.baseUrl}`;
   console.log(`Authorizing at ${wpUrl}..`);
   console.log("...");
 
