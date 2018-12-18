@@ -99,7 +99,6 @@ export default class Preview extends Component {
           }
         });
       });
-      console.log(childrenWithPreview);
       return childrenWithPreview;
     } else {
       return <PreviewLoader error={this.state.error} />;
