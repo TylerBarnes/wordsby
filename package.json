@@ -1,7 +1,7 @@
 {
-  "name": "gatsby-transformer-wordsby",
+  "name": "gatsby-plugin-wordsby",
   "version": "0.0.1",
-  "description": "A Gatsby transformer plugin for Wordsby/Wordpress local JSON",
+  "description": "A Gatsby plugin for Wordsby/Wordpress",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
