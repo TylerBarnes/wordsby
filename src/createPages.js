@@ -15,7 +15,7 @@ let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
 
 createTemplatesJson({ existingTemplateFiles, templatesPath });
 
-module.exports = ({ actions, graphql }) => {
+module.exports = ({ actions, graphql }, { ignorePaths }) => {
   const { createPage } = actions;
 
   if (!fs.existsSync(defaultTemplate)) {
@@ -121,7 +121,7 @@ module.exports = ({ actions, graphql }) => {
               slug
               name
               taxonomy
-              wordpress_id
+              ID
               pathname
             }
           }
@@ -195,7 +195,21 @@ module.exports = ({ actions, graphql }) => {
             usedTemplate = defaultTemplate;
           }
 
-          if (existingTemplateFiles.includes(usedTemplate)) {
+          let shouldIgnorePath = false;
+
+          if (!!ignorePaths && ignorePaths.length) {
+            ignorePaths.forEach(path => {
+              const match = new RegExp(path);
+              if (match.test(post.node.pathname)) {
+                shouldIgnorePath = true;
+              }
+            });
+          }
+
+          if (
+            existingTemplateFiles.includes(usedTemplate) &&
+            !shouldIgnorePath
+          ) {
             createPage({
               path: post.node.pathname,
               component: usedTemplate,
@@ -211,7 +225,7 @@ module.exports = ({ actions, graphql }) => {
                     : {}
               }
             });
-          } else {
+          } else if (!existingTemplateFiles.includes(usedTemplate)) {
             console.warn(
               `No template found at ${usedTemplate} but page ${
                 post.node.pathname
@@ -240,9 +254,21 @@ module.exports = ({ actions, graphql }) => {
             usedTemplate = `${templatesPath}/taxonomy/archive/index.${componentFileType}`;
           }
 
+          let shouldIgnorePath = false;
+
+          if (!!ignorePaths && ignorePaths.length) {
+            ignorePaths.forEach(path => {
+              const match = new RegExp(path);
+              if (match.test(pathname)) {
+                shouldIgnorePath = true;
+              }
+            });
+          }
+
           if (
             existingTemplateFiles.includes(usedTemplate) &&
-            terms.length > 0
+            terms.length > 0 &&
+            !shouldIgnorePath
           ) {
             // create taxonomy archives
             createPage({
@@ -258,7 +284,7 @@ module.exports = ({ actions, graphql }) => {
 
           terms &&
             terms.map(term => {
-              const { pathname, taxonomy, slug, name, wordpress_id } = term;
+              const { pathname, taxonomy, slug, name, ID } = term;
 
               const template = `${templatesPath}/taxonomy/single/${taxonomy}.${componentFileType}`;
 
@@ -270,7 +296,21 @@ module.exports = ({ actions, graphql }) => {
                 usedTemplate = `${templatesPath}/taxonomy/single/index.${componentFileType}`;
               }
 
-              if (existingTemplateFiles.includes(usedTemplate)) {
+              let shouldIgnorePath = false;
+
+              if (!!ignorePaths && ignorePaths.length) {
+                ignorePaths.forEach(path => {
+                  const match = new RegExp(path);
+                  if (match.test(pathname)) {
+                    shouldIgnorePath = true;
+                  }
+                });
+              }
+
+              if (
+                existingTemplateFiles.includes(usedTemplate) &&
+                !shouldIgnorePath
+              ) {
                 // create term pages
                 createPage({
                   path: pathname,
@@ -278,7 +318,7 @@ module.exports = ({ actions, graphql }) => {
                   context: {
                     label: name,
                     slug: slug,
-                    wordpress_id: wordpress_id
+                    wordpress_id: ID
                   }
                 });
               }
