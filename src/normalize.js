@@ -41,7 +41,7 @@ const prepareACFChildNodes = (
   const acfChildNode = {
     ...obj,
     id: entityId + topLevelIndex + type,
-    parent: entityId.toString(),
+    parent: entityId,
     children: [],
     internal: { type, contentDigest: digest(JSON.stringify(obj)) }
   };
@@ -70,6 +70,7 @@ exports.createNodeFromEntity = (
 
   let children = [];
   let childrenNodes = [];
+  console.log(id);
   if (entity.acf) {
     _.each(entity.acf, (value, key) => {
       if (_.isArray(value) && value[0] && value[0].acf_fc_layout) {
@@ -80,7 +81,8 @@ exports.createNodeFromEntity = (
 
             const acfChildNode = prepareACFChildNodes(
               f,
-              entity.ID + i,
+              id,
+              //   id + i,
               key,
               type,
               children,
@@ -102,7 +104,7 @@ exports.createNodeFromEntity = (
     children,
     parent: parentNode.id,
     internal: {
-      //   type: e.__type,
+      //   type: entity.__type,
       type,
       contentDigest: createContentDigest(entity)
       //   contentDigest: digest(JSON.stringify(entity))
