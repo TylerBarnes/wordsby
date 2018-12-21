@@ -70,7 +70,7 @@ exports.createNodeFromEntity = (
 
   let children = [];
   let childrenNodes = [];
-  console.log(id);
+
   if (entity.acf) {
     _.each(entity.acf, (value, key) => {
       if (_.isArray(value) && value[0] && value[0].acf_fc_layout) {
@@ -104,7 +104,7 @@ exports.createNodeFromEntity = (
     children,
     parent: parentNode.id,
     internal: {
-      //   type: entity.__type,
+      //   type: entity.type,
       type,
       contentDigest: createContentDigest(entity)
       //   contentDigest: digest(JSON.stringify(entity))
