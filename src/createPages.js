@@ -121,7 +121,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               slug
               name
               taxonomy
-              ID
+              ID: wordpress_id
               pathname
             }
           }
