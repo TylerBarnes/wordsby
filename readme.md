@@ -10,7 +10,7 @@ Wordsby Admin commits data and files from your WP instance directly to your gats
 
 ## Sites built with Wordsby
 
-- [TransitionLink](https://transitionlink.tylerbarnes.ca)
+- [TransitionLink](https://transitionlink.tylerbarnes.ca) [[source]](https://github.com/TylerBarnes/TransitionLinkDocs/)
 - [Bare](https://bare.ca)
 
 ## Set up
