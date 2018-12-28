@@ -14,6 +14,7 @@ const digest = str =>
 
 const prepareACFChildNodes = (
   obj,
+  parentId,
   entityId,
   topLevelIndex,
   type,
@@ -41,7 +42,7 @@ const prepareACFChildNodes = (
   const acfChildNode = {
     ...obj,
     id: entityId + topLevelIndex + type,
-    parent: entityId,
+    parent: parentId,
     children: [],
     internal: { type, contentDigest: digest(JSON.stringify(obj)) }
   };
@@ -82,7 +83,7 @@ exports.createNodeFromEntity = (
             const acfChildNode = prepareACFChildNodes(
               f,
               id,
-              //   id + i,
+              id + i,
               key,
               type,
               children,
