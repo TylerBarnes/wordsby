@@ -4,35 +4,31 @@ const passwordValidator = require("password-validator");
 
 const generatePreviewTokenConfig = () => `
       {
-        resolve: "wordsby",
+        resolve: "gatsby-plugin-wordsby",
         options: {
           previewToken: "${generatePassword(56, false)}"
         }
       }`;
+
 const getConfig = () => {
   return new Promise((resolve, reject) => {
     const config = importCwd("./gatsby-config");
     if (!config) return false;
 
     const gatsbypressconfig = config.plugins.filter(
-      plugin => plugin.resolve === "wordsby"
-    )[0];
-
-    const wordpressconfig = config.plugins.filter(
-      plugin => plugin.resolve === "gatsby-source-wordpress"
+      plugin => plugin.resolve === "gatsby-plugin-wordsby"
     )[0];
 
     let wpUrl = false;
     if (gatsbypressconfig.options && gatsbypressconfig.options.siteUrl) {
       wpUrl = gatsbypressconfig.options.siteUrl;
-    } else if (wordpressconfig && wordpressconfig.options) {
     }
 
     if (!wpUrl) {
       throw Error(
         `You'll need to add a siteUrl option to your wordsby options. 
         {
-          resolve: 'wordsby',
+          resolve: 'gatsby-plugin-wordsby',
           options: {
             siteUrl: [enter your WP url here],
           },

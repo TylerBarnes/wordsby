@@ -1,6 +1,6 @@
 {
   "name": "wordsby",
-  "version": "0.5.6",
+  "version": "0.6.1",
   "description": "",
   "main": "index.js",
   "bin": {
