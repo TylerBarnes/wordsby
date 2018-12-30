@@ -36,3 +36,4 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
 - Add yarn script to generate generic templates based on user input
 - Use gatsby themes for fallback templates using component shadowing?
 - Transition starter to gatsby theme?
+- Migrate normalizers from `gatsby-source-wordpress`
