@@ -22,18 +22,3 @@ Wordsby Admin commits data and files from your WP instance directly to your gats
 5. [Connect your WP instance to your Gatsby repo](https://github.com/TylerBarnes/wordsby/wiki/Github---Gitlab-integration-setup)
 
 Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
-
-## TODO
-
-- Remove need for wordsby-cli
-  - get templates via github/gitlab api
-  - create reusable circleci config for automatic preview template builds/deploys in WP instead of POSTing a zip
-  - consider using post-robot to send preview data to the actual front end in an iframe instead of making a preview build
-- Add simple [oauth2 connection](https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/) to github/[gitlab](https://github.com/omines/oauth2-gitlab) api instead of API tokens
-- Create better documentation
-- Refactor and add automated tests
-- Add support for template file extensions other than .js
-- Add yarn script to generate generic templates based on user input
-- Use gatsby themes for fallback templates using component shadowing?
-- Transition starter to gatsby theme?
-- Migrate normalizers from `gatsby-source-wordpress`
