@@ -29,7 +29,7 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
   - get templates via github/gitlab api
   - create reusable circleci config for automatic preview template builds/deploys in WP instead of POSTing a zip
   - consider using post-robot to send preview data to the actual front end in an iframe instead of making a preview build
-- Add simple oauth2 connection to github/gitlab api instead of API tokens
+- Add simple [oauth2 connection](https://www.smashingmagazine.com/2016/03/making-a-wordpress-plugin-that-uses-service-apis/) to github/gitlab api instead of API tokens
 - Create better documentation
 - Refactor and add automated tests
 - Add support for template file extensions other than .js
