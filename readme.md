@@ -1,7 +1,7 @@
-
 ![Wordsby logo](wordsby-logo.png?raw=true "Wordsby Admin logo")
 
 # Wordsby (WIP)
+
 The goal of this project is to make it as easy as possible for WP developers to switch to Gatsby development with absolutely no compromises.
 
 Wordsby Admin commits data and files from your WP instance directly to your gatsby repo. This fixes a lot of the issues around `gatsby-source-wordpress` for large sites.
@@ -22,3 +22,16 @@ Wordsby Admin commits data and files from your WP instance directly to your gats
 5. [Connect your WP instance to your Gatsby repo](https://github.com/TylerBarnes/wordsby/wiki/Github---Gitlab-integration-setup)
 
 Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
+
+## TODO
+
+- Remove need for wordsby-cli
+  - get templates via github/gitlab api
+  - create reusable circleci config for automatic preview template builds/deploys in WP instead of POSTing a zip
+- Add simple oauth2 connection to github/gitlab api instead of API tokens
+- Create better documentation
+- Refactor and add automated tests
+- Add support for template file extensions other than .js
+- Add yarn script to generate generic templates based on user input
+- Use gatsby themes for fallback templates using component shadowing?
+- Transition starter to gatsby theme?
