@@ -5,10 +5,12 @@ const glob = require("glob");
 const createTemplatesJson = require("./createTemplatesJson");
 const paginate = require("gatsby-awesome-pagination").paginate;
 
-const componentFileType = "js";
+// const componentFileType = "js";
 const templatesPath = path.resolve(`./src/templates/`);
 const defaultTemplate = `${templatesPath}/index.js`;
-const createPreviewPages = require("./createPreviewPages");
+// const createPreviewPages = require("./createPreviewPages");
+const getFirstExistingTemplate = require("./utils/getFirstExistingTemplate");
+const shouldIgnorePath = require("./utils/shouldIgnorePath");
 
 let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
   dot: true
@@ -23,11 +25,11 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
     throw `default template doesn't exist at ${defaultTemplate}`;
   }
 
-  createPreviewPages({
-    existingTemplateFiles,
-    createPage,
-    graphql
-  });
+  // createPreviewPages({
+  //   existingTemplateFiles,
+  //   createPage,
+  //   graphql
+  // });
 
   return graphql(`
     {
@@ -77,79 +79,23 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
       );
 
       // create post type pages
-      posts.forEach((post, index) => {
-        const template = `${templatesPath}/${
-          post.node.template_slug
-        }.${componentFileType}`;
+      _.each(posts, (post, index) => {
+        const {
+          node: { template_slug, pathname }
+        } = post;
+
+        if (shouldIgnorePath({ ignorePaths, pathname })) return true;
 
         const acf = post.node.acf;
+        const archivePostType = acf && acf.post_type ? acf.post_type : false;
+        const isArchive = !!acf && !!acf.is_archive;
 
-        const archivePostType = acf ? post.node.acf.post_type : false;
-
-        if (acf && acf.is_archive) {
-          const archivePosts = posts.filter(
-            ({ node }) => node.post_type === archivePostType
-          );
-
-          const itemsPerPage = parseInt(acf.posts_per_page);
-          const defaultArchiveTemplate = `${templatesPath}/archive/index.${componentFileType}`;
-          const postTypeArchiveTemplate = `${templatesPath}/archive/${archivePostType}.${componentFileType}`;
-
-          let usedTemplate;
-
-          if (existingTemplateFiles.includes(postTypeArchiveTemplate)) {
-            usedTemplate = postTypeArchiveTemplate;
-          } else {
-            usedTemplate = defaultArchiveTemplate;
-          }
-
-          if (existingTemplateFiles.includes(usedTemplate)) {
-            paginate({
-              createPage: createPage,
-              component: usedTemplate,
-              items: archivePosts,
-              itemsPerPage: itemsPerPage,
-              pathPrefix: post.node.pathname.replace(/\/$/, ""),
-              context: {
-                archive: true,
-                id: post.node.ID,
-                post_type: post.node.acf.post_type
-              }
-            });
-          } else {
-            console.warn(
-              `No template found at ${usedTemplate} but page ${
-                post.node.pathname
-              } tried to use it.`
-            );
-          }
-        } else {
-          let usedTemplate;
-
-          if (existingTemplateFiles.includes(template)) {
-            usedTemplate = template;
-          } else {
-            usedTemplate = defaultTemplate;
-          }
-
-          let shouldIgnorePath = false;
-
-          if (!!ignorePaths && ignorePaths.length) {
-            ignorePaths.forEach(path => {
-              const match = new RegExp(path);
-              if (match.test(post.node.pathname)) {
-                shouldIgnorePath = true;
-              }
-            });
-          }
-
-          if (
-            existingTemplateFiles.includes(usedTemplate) &&
-            !shouldIgnorePath
-          ) {
+        if (!isArchive) {
+          const template = getFirstExistingTemplate([template_slug, `index`]);
+          if (template) {
             createPage({
               path: post.node.pathname,
-              component: usedTemplate,
+              component: template,
               context: {
                 id: post.node.ID,
                 previousPost:
@@ -162,12 +108,34 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
                     : {}
               }
             });
-          } else if (!existingTemplateFiles.includes(usedTemplate)) {
-            console.warn(
-              `No template found at ${usedTemplate} but page ${
-                post.node.pathname
-              } tried to use it.`
-            );
+          }
+        }
+
+        if (isArchive) {
+          const archivePosts = posts.filter(
+            ({ node }) => node.post_type === archivePostType
+          );
+
+          const itemsPerPage = parseInt(acf.posts_per_page);
+
+          let template = getFirstExistingTemplate([
+            `archive/${archivePostType}`,
+            "archive/index"
+          ]);
+
+          if (template) {
+            paginate({
+              createPage: createPage,
+              component: usedTemplate,
+              items: archivePosts,
+              itemsPerPage: itemsPerPage,
+              pathPrefix: post.node.pathname.replace(/\/$/, ""),
+              context: {
+                archive: true,
+                id: post.node.ID,
+                post_type: post.node.acf.post_type
+              }
+            });
           }
         }
       });
@@ -179,38 +147,21 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
       if (weShouldGenerateTaxonomyPages) {
         const taxonomies = result.data.allWordsbyTaxTerms.edges;
 
-        taxonomies.map(({ node: taxonomy }) => {
+        _.each(taxonomies, ({ node: taxonomy }) => {
           const { name, pathname, terms, label } = taxonomy;
-          const template = `${templatesPath}/taxonomy/archive/${name}.${componentFileType}`;
 
-          let usedTemplate;
+          if (shouldIgnorePath({ ignorePaths, pathname })) return true;
 
-          if (existingTemplateFiles.includes(template)) {
-            usedTemplate = template;
-          } else {
-            usedTemplate = `${templatesPath}/taxonomy/archive/index.${componentFileType}`;
-          }
+          const template = getFirstExistingTemplate([
+            `taxonomy/archive/${name}`,
+            `taxonomy/archive/index`
+          ]);
 
-          let shouldIgnorePath = false;
-
-          if (!!ignorePaths && ignorePaths.length) {
-            ignorePaths.forEach(path => {
-              const match = new RegExp(path);
-              if (match.test(pathname)) {
-                shouldIgnorePath = true;
-              }
-            });
-          }
-
-          if (
-            existingTemplateFiles.includes(usedTemplate) &&
-            terms.length > 0 &&
-            !shouldIgnorePath
-          ) {
+          if (template && terms.length > 0) {
             // create taxonomy archives
             createPage({
               path: pathname,
-              component: usedTemplate,
+              component: template,
               context: {
                 taxonomy_slug: name,
                 taxonomy_name: label,
@@ -220,38 +171,21 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
           }
 
           terms &&
-            terms.map(term => {
+            _.each(terms, term => {
               const { pathname, taxonomy, slug, name, ID } = term;
 
-              const template = `${templatesPath}/taxonomy/single/${taxonomy}.${componentFileType}`;
+              if (shouldIgnorePath({ ignorePaths, pathname })) return true;
 
-              let usedTemplate;
+              const template = getFirstExistingTemplate([
+                `taxonomy/single/${taxonomy}`,
+                `taxonomy/single/index`
+              ]);
 
-              if (existingTemplateFiles.includes(template)) {
-                usedTemplate = template;
-              } else {
-                usedTemplate = `${templatesPath}/taxonomy/single/index.${componentFileType}`;
-              }
-
-              let shouldIgnorePath = false;
-
-              if (!!ignorePaths && ignorePaths.length) {
-                ignorePaths.forEach(path => {
-                  const match = new RegExp(path);
-                  if (match.test(pathname)) {
-                    shouldIgnorePath = true;
-                  }
-                });
-              }
-
-              if (
-                existingTemplateFiles.includes(usedTemplate) &&
-                !shouldIgnorePath
-              ) {
+              if (template) {
                 // create term pages
                 createPage({
                   path: pathname,
-                  component: usedTemplate,
+                  component: template,
                   context: {
                     label: name,
                     slug: slug,
