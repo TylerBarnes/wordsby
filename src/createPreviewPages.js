@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
   // remove taxonomies from previews
   existingTemplateFiles = existingTemplateFiles.filter(
@@ -17,14 +19,6 @@ function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
         return Promise.reject(result.errors);
       }
 
-      const {
-        data: {
-          site: {
-            siteMetadata: { siteUrl }
-          }
-        }
-      } = result;
-
       _.each(existingTemplateFiles, template => {
         const indexOfFilename = template.lastIndexOf("/");
         const indexOfExtension = template.lastIndexOf(".js");
@@ -39,7 +33,7 @@ function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
         const folderName =
           "/" + template.substring(indexOfFolderName + 1, indexOfFilename);
 
-        const pathname = `${
+        const pathname = `/preview${
           folderName !== "/templates" ? folderName : ""
         }/${fileName}`;
 
@@ -49,15 +43,15 @@ function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
           context: {
             id: result.data.wordsbyCollections.wordpress_id,
             preview: true,
-            env: process.env.NODE_ENV,
-            siteUrl: siteUrl
+            env: process.env.NODE_ENV
           }
         });
       });
     })
     .catch(err => {
+      console.log(err);
       throw "There was a problem building the WP preview templates";
     });
 }
 
-export default createPreviewPages;
+module.exports = createPreviewPages;
