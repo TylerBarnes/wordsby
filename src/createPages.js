@@ -8,7 +8,7 @@ const paginate = require("gatsby-awesome-pagination").paginate;
 // const componentFileType = "js";
 const templatesPath = path.resolve(`./src/templates/`);
 const defaultTemplate = `${templatesPath}/index.js`;
-// const createPreviewPages = require("./createPreviewPages");
+const createPreviewPages = require("./createPreviewPages");
 const getFirstExistingTemplate = require("./utils/getFirstExistingTemplate");
 const shouldIgnorePath = require("./utils/shouldIgnorePath");
 
@@ -25,11 +25,12 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
     throw `default template doesn't exist at ${defaultTemplate}`;
   }
 
-  // createPreviewPages({
-  //   existingTemplateFiles,
-  //   createPage,
-  //   graphql
-  // });
+  createPreviewPages({
+    existingTemplateFiles,
+    createPage,
+    graphql,
+    ignorePaths
+  });
 
   return graphql(`
     {

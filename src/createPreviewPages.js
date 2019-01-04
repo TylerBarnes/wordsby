@@ -1,6 +1,12 @@
 const _ = require("lodash");
+const shouldIgnorePath = require("./utils/shouldIgnorePath");
 
-function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
+function createPreviewPages({
+  existingTemplateFiles,
+  createPage,
+  graphql,
+  ignorePaths
+}) {
   // remove taxonomies from previews
   existingTemplateFiles = existingTemplateFiles.filter(
     template => !template.includes("/taxonomy/")
@@ -8,8 +14,21 @@ function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
 
   return graphql(`
     {
-      wordsbyCollections {
+      wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
+        value
+      }
+
+      wordsbyCollections(post_status: { eq: "publish" }) {
         wordpress_id: ID
+      }
+
+      allWordsbyCollections(filter: { post_status: { eq: "publish" } }) {
+        edges {
+          node {
+            wordpress_id: ID
+            template_slug
+          }
+        }
       }
     }
   `)
@@ -37,13 +56,16 @@ function createPreviewPages({ existingTemplateFiles, createPage, graphql }) {
           folderName !== "/templates" ? folderName : ""
         }/${fileName}`;
 
+        if (shouldIgnorePath({ ignorePaths, pathname })) return true;
+
         createPage({
           path: pathname,
           component: template,
           context: {
             id: result.data.wordsbyCollections.wordpress_id,
             preview: true,
-            env: process.env.NODE_ENV
+            env: process.env.NODE_ENV,
+            siteUrl: result.data.wpUrl.value
           }
         });
       });
