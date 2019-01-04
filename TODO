@@ -1,7 +1,7 @@
 ✔ when WORDSBY_PUBLIC_PREVIEWS is enabled in wp-config.php, point the preview button to localhost and change the text to "develop preview", add an error message to every page reminding about public previews. @done(19-01-03 17:43)
 ☐ when public previews aren't enabled, only show the preview button if the frontend url is set
-☐ if the frontend url is set, pass the correct path through to a preview template which is an iframe around the frontend of the site with the correct preview template path and query vars
-☐ use post-robot to send preview data to the iframe
+✔ if the frontend url is set, pass the correct path through to a preview template which is an iframe around the frontend of the site with the correct preview template path and query vars @done(19-01-03 21:45)
+✔ use post-robot to send preview data to the iframe @done(19-01-03 21:45)
 ☐ if a preview is accessed outside an iframe, redirect to the home page
 ☐ remove preview templates from the gatsby internal site graphql nodes
 ☐ automatically add preview templates to a robots.txt

@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import PreviewLoader from "./PreviewLoader";
 
+let robot = false;
+let postRobot;
+if (typeof window !== `undefined`) {
+  postRobot = require("post-robot");
+} else {
+  postRobot = false;
+}
+
 export default class Preview extends Component {
   constructor(props) {
     super(props);
@@ -9,8 +17,49 @@ export default class Preview extends Component {
       previewData: false,
       error: false
     };
+
+    this.getPreviewDataFromPostRobot = this.getPreviewDataFromPostRobot.bind(
+      this
+    );
+
+    if (!!postRobot && robot.cancel) {
+      robot.cancel();
+    }
   }
+
+  inIframe() {
+    if (typeof window === "undefined") return false;
+
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  getPreviewDataFromPostRobot = () => {
+    postRobot.send(window.parent, "iframeReadyForData", {
+      iframeReady: true
+    });
+
+    postRobot.on("previewDataLoaded", event => {
+      const previewData = event.data.previewData;
+
+      this.setState({ previewData: previewData });
+
+      return {
+        previewDataLoaded: true
+      };
+    });
+
+    return;
+  };
+
   componentDidMount() {
+    if (this.inIframe()) {
+      return this.getPreviewDataFromPostRobot();
+    }
+
     const urlParams =
       typeof window !== "undefined"
         ? new URLSearchParams(window.location.search)
