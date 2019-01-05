@@ -23,7 +23,7 @@ async function onCreateNode(
     }
   }
 
-  const { createNode, createParentChildLink } = actions;
+  const { deleteNode, deletePage, createNode, createParentChildLink } = actions;
 
   function transformObject(obj, id, type) {
     return createNodeFromEntity(
@@ -37,8 +37,23 @@ async function onCreateNode(
     );
   }
 
-  // We only care about JSON content.
+  if (node.internal.type === "SitePage") {
+    if (node.path.startsWith("/preview/")) {
+      // remove preview template pages from the sitemap
+      return deleteNode({ node: node });
+    } else if (
+      node.path.includes("/psychic-window/") ||
+      node.path.includes("/schema_builder/")
+    ) {
+      // delete schema builder and psychic window pages and nodes.
+      deletePage({ path: node.path, component: node.component });
+      deleteNode({ node: node });
+      return;
+    }
+  }
+
   if (node.internal.mediaType !== `application/json`) {
+    // We only care about JSON content.
     return;
   }
 
