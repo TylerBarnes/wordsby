@@ -76,14 +76,9 @@ class Preview extends Component {
     const post_id = urlParams.get("preview");
     const nonce = urlParams.get("nonce");
 
-    if (!rest_base || !post_id || !nonce) {
-      return this.setState({
-        error: {
-          title: "Oops...",
-          message:
-            'It looks like this page was accessed directly.<br> For a preview, log in to wordpress and click the "Preview" button from the edit screen.'
-        }
-      });
+    if ((!rest_base || !post_id || !nonce) && !this.inIframe()) {
+      // redirect home if a preview page is accessed directly
+      window.location.href = "/";
     }
 
     console.log("preview props", this.props);
@@ -162,10 +157,12 @@ class Preview extends Component {
 
 const PreviewContainer = props => {
   return (
-    <Helmet>
-      <meta name="robots" content="noindex" />
+    <>
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <Preview {...props} />
-    </Helmet>
+    </>
   );
 };
 

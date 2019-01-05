@@ -2,6 +2,6 @@
 ☐ when public previews aren't enabled, only show the preview button if the frontend url is set
 ✔ if the frontend url is set, pass the correct path through to a preview template which is an iframe around the frontend of the site with the correct preview template path and query vars @done(19-01-03 21:45)
 ✔ use post-robot to send preview data to the iframe @done(19-01-03 21:45)
-☐ if a preview is accessed outside an iframe, redirect to the home page
+✔ if a preview is accessed outside an iframe, redirect to the home page @done(19-01-04 23:32)
 ✔ remove preview templates from the gatsby internal site graphql nodes @done(19-01-04 23:20)
 ✔ automatically add preview templates to a robots.txt @done(19-01-04 23:20) (added a noindex meta tag instead)
