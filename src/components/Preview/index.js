@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PreviewLoader from "./PreviewLoader";
+import Helmet from "react-helmet";
 
 let robot = false;
 let postRobot;
@@ -9,7 +10,7 @@ if (typeof window !== `undefined`) {
   postRobot = false;
 }
 
-export default class Preview extends Component {
+class Preview extends Component {
   constructor(props) {
     super(props);
 
@@ -158,3 +159,14 @@ export default class Preview extends Component {
     }
   }
 }
+
+const PreviewContainer = props => {
+  return (
+    <Helmet>
+      <meta name="robots" content="noindex" />
+      <Preview {...props} />
+    </Helmet>
+  );
+};
+
+export default PreviewContainer;
