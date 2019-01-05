@@ -38,10 +38,6 @@ export default class Preview extends Component {
   }
 
   getPreviewDataFromPostRobot = () => {
-    postRobot.send(window.parent, "iframeReadyForData", {
-      iframeReady: true
-    });
-
     postRobot.on("previewDataLoaded", event => {
       const previewData = event.data.previewData;
 
@@ -51,6 +47,14 @@ export default class Preview extends Component {
         previewDataLoaded: true
       };
     });
+
+    setTimeout(
+      () =>
+        postRobot.send(window.parent, "iframeReadyForData", {
+          iframeReady: true
+        }),
+      1000
+    );
 
     return;
   };

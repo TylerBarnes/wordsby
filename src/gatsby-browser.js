@@ -3,11 +3,11 @@ const Preview = require("./components/Preview").default;
 
 // eslint-disable-next-line react/prop-types,react/display-name
 exports.wrapPageElement = ({ element, props }) => {
-  return props.pageContext && props.pageContext.preview ? (
-    <Preview {...props}>{element}</Preview>
-  ) : (
-    element
-  );
+  if (props.pageContext && props.pageContext.preview) {
+    return <Preview {...props}>{element}</Preview>;
+  } else {
+    return element;
+  }
 };
 
 exports.disableCorePrefetching = () =>
