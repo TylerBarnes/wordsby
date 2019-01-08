@@ -1,2 +1,2 @@
-exports.onCreateNode = require('./onCreateNode')
-exports.createPages = require('./createPages')
+exports.onCreateNode = require("./onCreateNode");
+exports.createPages = require("./createPages");

@@ -6,7 +6,15 @@ const path = require(`path`);
 const { createNodeFromEntity } = require(`./normalize`);
 
 async function onCreateNode(
-  { node, actions, loadNodeContent, createNodeId, createContentDigest },
+  {
+    node,
+    actions,
+    loadNodeContent,
+    createNodeId,
+    createContentDigest,
+    getNodes,
+    getNode
+  },
   pluginOptions
 ) {
   function getType({ node, object, isArray }) {
@@ -33,7 +41,9 @@ async function onCreateNode(
       createParentChildLink,
       createContentDigest,
       node,
-      createNode
+      createNode,
+      getNodes,
+      getNode
     );
   }
 
