@@ -127,7 +127,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
           if (template) {
             paginate({
               createPage: createPage,
-              component: usedTemplate,
+              component: template,
               items: archivePosts,
               itemsPerPage: itemsPerPage,
               pathPrefix: post.node.pathname.replace(/\/$/, ""),
