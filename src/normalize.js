@@ -192,7 +192,7 @@ const updateJsonInlineImageTagsToStaticUrl = async (node, getNodes) =>
 
             url = url.replace("../", "wordsby/");
             const urlpath = path.resolve(url);
-            const imageSizesPattern = new RegExp("(?:[-_]?[0-9]+x[0-9]+)");
+            const imageSizesPattern = new RegExp("(?:[-_][0-9]+x[0-9]+)");
             const urlpath_remove_sizes = urlpath.replace(imageSizesPattern, "");
 
             const imageNode = imageNodes.find(imageNode => {
@@ -205,7 +205,7 @@ const updateJsonInlineImageTagsToStaticUrl = async (node, getNodes) =>
             // console.log(imageNode);
 
             if (!imageNode) {
-              console.log(`no image node to use. dead end for ${urlpath}`);
+              // console.log(`no image node to use. dead end for ${urlpath}`);
               continue;
             }
             // console.log(`image node found for ${urlpath}`);
