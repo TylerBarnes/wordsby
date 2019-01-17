@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.2.0",
+    "async-foreach": "^0.1.3",
+    "babel-plugin-transform-regenerator": "^6.26.0",
     "babel-preset-gatsby-package": "^0.1.3",
     "better-react-spinkit": "^2.0.4",
     "cheerio": "^1.0.0-rc.2",

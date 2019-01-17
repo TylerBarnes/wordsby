@@ -4,6 +4,7 @@
 const _ = require(`lodash`);
 const path = require(`path`);
 const { createNodeFromEntity } = require(`./normalize`);
+const asyncForEach = require("async-foreach").forEach;
 
 async function onCreateNode(
   {
@@ -17,74 +18,106 @@ async function onCreateNode(
   },
   pluginOptions
 ) {
-  function getType({ node, object, isArray }) {
-    if (pluginOptions && _.isFunction(pluginOptions.typeName)) {
-      return pluginOptions.typeName({ node, object, isArray });
-    } else if (pluginOptions && _.isString(pluginOptions.typeName)) {
-      return pluginOptions.typeName;
-    } else if (node.internal.type !== `File`) {
-      return _.upperFirst(_.camelCase(`Wordsby ${node.internal.type}`));
-    } else if (isArray) {
-      return _.upperFirst(_.camelCase(`Wordsby ${node.name}`));
-    } else {
-      return _.upperFirst(_.camelCase(`Wordsby ${path.basename(node.dir)}`));
+  return new Promise(async resolve => {
+    function getType({ node, object, isArray }) {
+      if (pluginOptions && _.isFunction(pluginOptions.typeName)) {
+        return pluginOptions.typeName({ node, object, isArray });
+      } else if (pluginOptions && _.isString(pluginOptions.typeName)) {
+        return pluginOptions.typeName;
+      } else if (node.internal.type !== `File`) {
+        return _.upperFirst(_.camelCase(`Wordsby ${node.internal.type}`));
+      } else if (isArray) {
+        return _.upperFirst(_.camelCase(`Wordsby ${node.name}`));
+      } else {
+        return _.upperFirst(_.camelCase(`Wordsby ${path.basename(node.dir)}`));
+      }
     }
-  }
 
-  const { deleteNode, deletePage, createNode, createParentChildLink } = actions;
-
-  function transformObject(obj, id, type) {
-    return createNodeFromEntity(
-      obj,
-      id,
-      type,
-      createParentChildLink,
-      createContentDigest,
-      node,
+    const {
+      deleteNode,
+      deletePage,
       createNode,
-      getNodes,
-      getNode
-    );
-  }
+      createParentChildLink
+    } = actions;
 
-  if (node.internal.type === "SitePage") {
-    if (node.path.startsWith("/preview/")) {
-      // remove preview template pages from the sitemap
-      return deleteNode({ node: node });
-    } else if (
-      node.path.includes("/psychic-window/") ||
-      node.path.includes("/schema_builder/")
-    ) {
-      // delete schema builder and psychic window pages and nodes.
-      deletePage({ path: node.path, component: node.component });
-      deleteNode({ node: node });
+    async function transformObject(obj, id, type) {
+      return await createNodeFromEntity(
+        obj,
+        id,
+        type,
+        createParentChildLink,
+        createContentDigest,
+        node,
+        createNode,
+        getNodes,
+        getNode
+      );
+    }
+
+    if (node.internal.type === "SitePage") {
+      if (node.path.startsWith("/preview/")) {
+        // remove preview template pages from the sitemap
+        deleteNode({ node: node });
+        // console.log("preview");
+        resolve();
+        return;
+      } else if (
+        node.path.includes("/psychic-window/") ||
+        node.path.includes("/schema_builder/")
+      ) {
+        // delete schema builder and psychic window pages and nodes.
+        deletePage({ path: node.path, component: node.component });
+        deleteNode({ node: node });
+        // console.log("deleting psych and schema");
+        resolve();
+        return;
+      }
+    }
+
+    if (node.internal.mediaType !== `application/json`) {
+      // We only care about JSON content.
+      // console.log("not json");
+      resolve();
       return;
     }
-  }
 
-  if (node.internal.mediaType !== `application/json`) {
-    // We only care about JSON content.
-    return;
-  }
+    const content = await loadNodeContent(node);
+    const parsedContent = JSON.parse(content);
 
-  const content = await loadNodeContent(node);
-  const parsedContent = JSON.parse(content);
+    // console.log("parse content");
+    if (_.isArray(parsedContent)) {
+      // parsedContent.forEach((obj, i) => {
+      //   transformObject(
+      //     obj,
+      //     obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
+      //     getType({ node, object: obj, isArray: true })
+      //   );
+      // });
 
-  if (_.isArray(parsedContent)) {
-    parsedContent.forEach((obj, i) => {
-      transformObject(
-        obj,
-        obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
-        getType({ node, object: obj, isArray: true })
+      await asyncForEach(parsedContent, async (obj, i) => {
+        // console.log(`please wait ${i}`);
+        await transformObject(
+          obj,
+          obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
+          getType({ node, object: obj, isArray: true })
+        );
+      });
+
+      // console.log("i waited!");
+    } else if (_.isPlainObject(parsedContent)) {
+      await transformObject(
+        parsedContent,
+        parsedContent.id
+          ? parsedContent.id
+          : createNodeId(`${node.id} >>> JSON`),
+        getType({ node, object: parsedContent, isArray: false })
       );
-    });
-  } else if (_.isPlainObject(parsedContent)) {
-    transformObject(
-      parsedContent,
-      parsedContent.id ? parsedContent.id : createNodeId(`${node.id} >>> JSON`),
-      getType({ node, object: parsedContent, isArray: false })
-    );
-  }
+    }
+
+    // console.log("resolve oncreatenode");
+    resolve();
+    return;
+  });
 }
 
 module.exports = onCreateNode;
