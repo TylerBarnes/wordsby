@@ -20,3 +20,27 @@ Wordsby Admin commits data and files from your WP instance directly to your gats
 3. [Connect your WP instance to your Gatsby repo](https://github.com/TylerBarnes/wordsby/wiki/Github---Gitlab-integration-setup).
 
 Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
+
+## Feature list
+
+- Wordsby Admin commits JSON and media files directly to your git repo (like netlify cms).
+- Instant admin editor previews from WP admin for all post types using regular WP preview button
+- WP "microservices" using WordPress forms, comments, and any other frontend WP plugin in your gatsby site.
+- WP permalink structure is used for Gatsby pathnames & links
+- WP menus just work
+- No need to edit gatsby-node.js
+- Select your gatsby template from within WP
+- Basic template hierarchy with default template support so editors and admins can't break the build
+- Backend permalinks point to your Gatsby frontend
+- Any post or page can become an archive page with pagination via a checkbox on each post/page edit screen
+- Taxonomy term and archive pages are built automatically if there is a template for them in gatsby
+- Page context contains previous / next post names and links relative to the current page
+- Schema builder post type to build out your graphql schema and prevent the missing data bug in gatsby that breaks your build when you're missing acf flexible content fields, one post of every post type, and one category.
+
+
+### Bonus features:
+
+- Improved WP admin theme
+- Automatic unsplash nature avatars for all users
+- Faster `gatsby develop` for small to medium sized sites
+- ACF-to-REST plugin is not needed as ACF support is built in
