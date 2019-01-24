@@ -122,7 +122,7 @@ exports.createNodeFromEntity = async (
     }
   };
 
-  updateJsonInlineImageTagsToStaticUrl(node, getNodes);
+  await updateJsonInlineImageTagsToStaticUrl(node, getNodes);
 
   createNode(node);
   createParentChildLink({ parent: parentNode, child: node });
@@ -131,7 +131,13 @@ exports.createNodeFromEntity = async (
   });
 };
 
-let updatedPageCount = 0;
+// function timeout(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+// async function sleep(fn, ...args) {
+//   await timeout(3000);
+//   return fn(...args);
+// }
 
 // If the image is relative (not hosted elsewhere)
 // 1. Find the image file
@@ -139,49 +145,63 @@ let updatedPageCount = 0;
 // This will allow gatsby-remark-images to resolve the image correctly
 // pluginOptions
 const updateJsonInlineImageTagsToStaticUrl = async (node, getNodes) => {
-  return new Promise(async resolve => {
-    const defaults = {
-      maxWidth: 650,
-      wrapperStyle: ``,
-      backgroundColor: `white`,
-      linkImagesToOriginal: true,
-      showCaptions: false,
-      // pathPrefix,
-      withWebp: false
-    };
+  const defaults = {
+    maxWidth: 650,
+    wrapperStyle: ``,
+    backgroundColor: `white`,
+    linkImagesToOriginal: true,
+    showCaptions: false,
+    // pathPrefix,
+    withWebp: false
+  };
 
-    // console.log(node);
+  // console.log(node);
 
-    const options = defaults;
-    // const options = _.defaults(pluginOptions, defaults)
+  const options = defaults;
+  // const options = _.defaults(pluginOptions, defaults)
 
-    const imageNodes = getNodes().filter(
-      node =>
-        !!node &&
-        !!node.absolutePath &&
-        node.absolutePath.includes("/wordsby/uploads/")
-    );
+  const imageNodes = getNodes().filter(
+    node =>
+      !!node &&
+      !!node.absolutePath &&
+      node.absolutePath.includes("/wordsby/uploads/")
+  );
 
-    // console.log(imageNodes);
+  // console.log(imageNodes);
 
-    // const defaults = {};
+  // const defaults = {};
 
-    // const options = _.defaults(pluginOptions, defaults);
+  // const options = _.defaults(pluginOptions, defaults);
 
-    // This will also allow the use of html image tags
-    // const rawHtmlNodes = select(markdownAST, `html`);
+  // This will also allow the use of html image tags
+  // const rawHtmlNodes = select(markdownAST, `html`);
 
-    // await new Promise(async (resolve, reject) => {
-    for (let key of Object.keys(node)) {
+  // await new Promise(async (resolve, reject) => {
+  const promises = [];
+
+  for await (let key of Object.keys(node)) {
+    let keyPromise = new Promise(async resolve => {
+      // console.log("waiting");
+
+      // await timeout(1000);
+
+      // console.log("waited");
+
       const field = node[key];
       // console.log(key);
       if (!!field && typeof field === "string") {
         // no img tags so skip.
-        if (!field.includes("<img")) continue;
+        if (!field.includes("<img")) {
+          resolve();
+          return;
+        }
 
         const $ = cheerio.load(field);
 
-        if ($(`img`).length === 0) continue;
+        if ($(`img`).length === 0) {
+          resolve();
+          return;
+        }
 
         let imageRefs = [];
 
@@ -189,74 +209,94 @@ const updateJsonInlineImageTagsToStaticUrl = async (node, getNodes) => {
           imageRefs.push($(this));
         });
 
-        for (let thisImg of imageRefs) {
-          let url = thisImg.attr("src");
-          // console.log(url);
+        let innerPromises = [];
 
-          // skip images that aren't a relative path
-          if (!url.startsWith("../uploads/")) continue;
+        for await (let thisImg of imageRefs) {
+          let promise = new Promise(async resolve => {
+            let url = thisImg.attr("src");
+            // console.log(url);
 
-          url = url.replace("../", "wordsby/");
-          const urlpath = path.resolve(url);
-          const imageSizesPattern = new RegExp("(?:[-_][0-9]+x[0-9]+)");
-          const urlpath_remove_sizes = urlpath.replace(imageSizesPattern, "");
+            // skip images that aren't a relative path
+            if (!url.startsWith("../uploads/")) {
+              resolve();
+              return;
+            }
 
-          const imageNode = imageNodes.find(imageNode => {
-            return (
-              urlpath_remove_sizes === imageNode.absolutePath &&
-              !imageSizesPattern.test(imageNode.absolutePath)
-            );
+            url = url.replace("../", "wordsby/");
+            const urlpath = path.resolve(url);
+            const imageSizesPattern = new RegExp("(?:[-_][0-9]+x[0-9]+)");
+            const urlpath_remove_sizes = urlpath.replace(imageSizesPattern, "");
+
+            const imageNode = imageNodes.find(imageNode => {
+              return (
+                urlpath_remove_sizes === imageNode.absolutePath &&
+                !imageSizesPattern.test(imageNode.absolutePath)
+              );
+            });
+
+            // console.log(imageNode);
+
+            if (!imageNode) {
+              // console.log(`no image node to use. dead end for ${urlpath}`);
+              resolve();
+              return;
+            }
+            // console.log(`image node found for ${urlpath}`);
+
+            let formattedImgTag = {};
+            formattedImgTag.url = thisImg.attr(`src`);
+            formattedImgTag.title = thisImg.attr(`title`);
+            formattedImgTag.alt = thisImg.attr(`alt`);
+
+            if (!formattedImgTag.url) {
+              // console.log(
+              //   `there was a image node but no image tag url, skipping ${urlpath}`
+              // );
+              resolve();
+              return;
+            }
+
+            const fileType = imageNode.ext;
+
+            // Ignore gifs as we can't process them,
+            // svgs as they are already responsive by definition
+            if (fileType !== `gif` && fileType !== `svg`) {
+              const rawHTML = await generateImagesAndUpdateNode(
+                formattedImgTag,
+                node,
+                imageNode,
+                options
+              );
+
+              // let rawHTML = false;
+
+              // console.log(rawHTML);
+
+              if (rawHTML) {
+                // Replace the image string
+                thisImg.replaceWith(rawHTML);
+                // updatedPageCount++;
+                // console.log(updatedPageCount);
+                // console.log(thisImg.attr("src"));
+                resolve();
+                return;
+                // thisImg.after(rawHTML).remove();
+              } else {
+                resolve();
+                return;
+              }
+            }
           });
 
-          // console.log(imageNode);
-
-          if (!imageNode) {
-            // console.log(`no image node to use. dead end for ${urlpath}`);
-            continue;
-          }
-          // console.log(`image node found for ${urlpath}`);
-
-          let formattedImgTag = {};
-          formattedImgTag.url = thisImg.attr(`src`);
-          formattedImgTag.title = thisImg.attr(`title`);
-          formattedImgTag.alt = thisImg.attr(`alt`);
-
-          if (!formattedImgTag.url) {
-            // console.log(
-            //   `there was a image node but no image tag url, skipping ${urlpath}`
-            // );
-            continue;
-          }
-
-          const fileType = imageNode.ext;
-
-          // Ignore gifs as we can't process them,
-          // svgs as they are already responsive by definition
-          if (fileType !== `gif` && fileType !== `svg`) {
-            const rawHTML = await generateImagesAndUpdateNode(
-              formattedImgTag,
-              node,
-              imageNode,
-              options
-            );
-
-            // console.log(rawHTML);
-
-            if (rawHTML) {
-              // Replace the image string
-              thisImg.replaceWith(rawHTML);
-              // updatedPageCount++;
-              // console.log(updatedPageCount);
-              console.log(thisImg.attr("src"));
-              // thisImg.after(rawHTML).remove();
-            } else {
-              continue;
-            }
-          }
+          innerPromises.push(promise);
         }
+
+        await Promise.all(innerPromises);
 
         // replace field with $.html()
         node[key] = $.html();
+        resolve();
+        return;
 
         // console.log("html updated");
 
@@ -296,15 +336,24 @@ const updateJsonInlineImageTagsToStaticUrl = async (node, getNodes) => {
         // recurse into arrays
         // console.log("no html to update, recursing!");
         await updateJsonInlineImageTagsToStaticUrl(field, getNodes);
+        resolve();
+        return;
+      } else {
+        resolve();
+        return;
       }
-    }
-    // _.each(node, async (field, key) => {
+    });
 
-    // });
-    // console.log("resolve updateJsonInlineImageTagsToStaticUrl");
-    resolve();
-    // });
-  });
+    promises.push(keyPromise);
+  }
+
+  await Promise.all(promises);
+  // _.each(node, async (field, key) => {
+
+  // });
+  // console.log("resolve updateJsonInlineImageTagsToStaticUrl");
+  return;
+  // });
 };
 
 // Takes a node and generates the needed images and then returns

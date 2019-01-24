@@ -6,7 +6,7 @@ const path = require(`path`);
 const { createNodeFromEntity } = require(`./normalize`);
 const asyncForEach = require("async-foreach").forEach;
 
-async function onCreateNode(
+function onCreateNode(
   {
     node,
     actions,
@@ -41,7 +41,7 @@ async function onCreateNode(
     } = actions;
 
     async function transformObject(obj, id, type) {
-      return await createNodeFromEntity(
+      await createNodeFromEntity(
         obj,
         id,
         type,
@@ -101,6 +101,11 @@ async function onCreateNode(
           obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
           getType({ node, object: obj, isArray: true })
         );
+
+        if (i === parsedContent.length - 1) {
+          resolve();
+          return;
+        }
       });
 
       // console.log("i waited!");
@@ -112,11 +117,13 @@ async function onCreateNode(
           : createNodeId(`${node.id} >>> JSON`),
         getType({ node, object: parsedContent, isArray: false })
       );
-    }
 
-    // console.log("resolve oncreatenode");
-    resolve();
-    return;
+      resolve();
+      return;
+    } else {
+      resolve();
+      return;
+    }
   });
 }
 
