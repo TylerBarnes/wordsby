@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-wordsby",
-  "version": "0.0.13-beta.3",
+  "version": "0.0.13-beta.4",
   "description": "A Gatsby plugin for Wordsby/Wordpress",
   "main": "index.js",
   "scripts": {
