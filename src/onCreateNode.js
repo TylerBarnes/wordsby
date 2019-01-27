@@ -12,7 +12,9 @@ async function onCreateNode(
     loadNodeContent,
     createNodeId,
     createContentDigest,
-    getNodes
+    getNodes,
+    reporter,
+    cache
   },
   pluginOptions
 ) {
@@ -61,7 +63,9 @@ async function onCreateNode(
       parentNode: node,
       createNode,
       getNodes,
-      pluginOptions
+      pluginOptions,
+      cache,
+      reporter
     });
   }
 

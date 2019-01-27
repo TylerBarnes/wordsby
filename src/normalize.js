@@ -8,9 +8,11 @@ const path = require(`path`);
 
 import removeImageSizes from "./utils/removeImageSizes";
 
-const imageClass = `gatsby-resp-image-image`;
-const imageWrapperClass = `gatsby-resp-image-wrapper`;
-const imageBackgroundClass = `gatsby-resp-image-background-image`;
+const {
+  imageClass,
+  imageBackgroundClass,
+  imageWrapperClass
+} = require(`./constants`);
 
 /**
  * Encrypts a String using md5 hash of hexadecimal digest.
@@ -77,7 +79,9 @@ exports.createNodeFromEntity = async ({
   parentNode,
   createNode,
   getNodes,
-  pluginOptions
+  pluginOptions,
+  cache,
+  reporter
 }) => {
   // Create subnodes for ACF Flexible layouts
   // eslint-disable-line no-unused-vars
@@ -124,7 +128,13 @@ exports.createNodeFromEntity = async ({
 
   // normalizers:
   // replace wordpress images with gatsby images
-  await replaceInlineImageTagsWithFluidImages(node, getNodes, pluginOptions);
+  await replaceInlineImageTagsWithFluidImages({
+    node,
+    getNodes,
+    pluginOptions,
+    cache,
+    reporter
+  });
 
   createNode(node);
   createParentChildLink({ parent: parentNode, child: node });
@@ -133,11 +143,13 @@ exports.createNodeFromEntity = async ({
   });
 };
 
-const replaceInlineImageTagsWithFluidImages = async (
+const replaceInlineImageTagsWithFluidImages = async ({
   node,
   getNodes,
-  pluginOptions
-) => {
+  pluginOptions,
+  cache,
+  reporter
+}) => {
   const defaults = {
     maxWidth: 650,
     wrapperStyle: ``,
@@ -175,7 +187,7 @@ const replaceInlineImageTagsWithFluidImages = async (
 
       await Promise.all(
         imageRefs.map(thisImg =>
-          replaceImage({ thisImg, node, imageNodes, options, $ })
+          replaceImage({ thisImg, imageNodes, options, cache, reporter, $ })
         )
       );
 
@@ -187,7 +199,14 @@ const replaceInlineImageTagsWithFluidImages = async (
   }
 };
 
-const replaceImage = async ({ thisImg, node, imageNodes, options, $ }) => {
+const replaceImage = async ({
+  thisImg,
+  imageNodes,
+  options,
+  cache,
+  reporter,
+  $
+}) => {
   let url = thisImg.attr("src");
 
   // skip images that aren't a relative path
@@ -223,10 +242,11 @@ const replaceImage = async ({ thisImg, node, imageNodes, options, $ }) => {
   // svgs as they are already responsive by definition
   if (fileType !== `gif` && fileType !== `svg`) {
     const rawHTML = await generateImagesAndUpdateNode({
-      node,
       formattedImgTag,
       imageNode,
       options,
+      cache,
+      reporter,
       $
     });
 
@@ -238,19 +258,20 @@ const replaceImage = async ({ thisImg, node, imageNodes, options, $ }) => {
 // Takes a node and generates the needed images and then returns
 // the needed HTML replacement for the image
 const generateImagesAndUpdateNode = async function({
-  node,
   formattedImgTag,
   imageNode,
   options,
+  cache,
+  reporter,
   $
 }) {
   if (!imageNode || !imageNode.absolutePath) return;
 
   let fluidResult = await fluid({
     file: imageNode,
-    args: options
-    // reporter,
-    // cache
+    args: options,
+    reporter,
+    cache
   });
 
   if (!fluidResult) return;
