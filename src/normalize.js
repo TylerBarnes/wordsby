@@ -128,13 +128,24 @@ exports.createNodeFromEntity = async ({
 
   // normalizers:
   // replace wordpress images with gatsby images
+  const imageNodes = getNodes().filter(
+    node =>
+      !!node &&
+      !!node.absolutePath &&
+      node.absolutePath.includes("/wordsby/uploads/")
+  );
+
   await replaceInlineImageTagsWithFluidImages({
     node,
-    getNodes,
+    imageNodes,
     pluginOptions,
     cache,
     reporter
   });
+
+  // add custom normalizers here in the future
+
+  // :end normalizers
 
   createNode(node);
   createParentChildLink({ parent: parentNode, child: node });
@@ -145,11 +156,13 @@ exports.createNodeFromEntity = async ({
 
 const replaceInlineImageTagsWithFluidImages = async ({
   node,
-  getNodes,
+  imageNodes,
   pluginOptions,
   cache,
   reporter
 }) => {
+  if (typeof getNodes !== "function") return;
+
   const defaults = {
     maxWidth: 650,
     wrapperStyle: ``,
@@ -160,14 +173,7 @@ const replaceInlineImageTagsWithFluidImages = async ({
     // withWebp: false
   };
 
-  const options = _.defaults(pluginOptions, defaults);
-
-  const imageNodes = getNodes().filter(
-    node =>
-      !!node &&
-      !!node.absolutePath &&
-      node.absolutePath.includes("/wordsby/uploads/")
-  );
+  const options = _.defaults(pluginOptions.inlineImages, defaults);
 
   for (let key of Object.keys(node)) {
     const field = node[key];
@@ -192,9 +198,23 @@ const replaceInlineImageTagsWithFluidImages = async ({
       );
 
       node[key] = $.html();
-    } else if (!!field && typeof field === "object") {
-      // recurse into arrays
-      await replaceInlineImageTagsWithFluidImages(field, getNodes);
+    } else if (
+      !!field &&
+      typeof field === "object" &&
+      // !_.isArray(field) &&
+      Object.keys(field).length > 0 &&
+      !field.hasOwnProperty("contentDigest") &&
+      !!pluginOptions.inlineImages &&
+      !!pluginOptions.inlineImages.recursive
+    ) {
+      // recurse into objects & arrays
+      await replaceInlineImageTagsWithFluidImages({
+        node: field,
+        imageNodes,
+        pluginOptions,
+        cache,
+        reporter
+      });
     }
   }
 };
