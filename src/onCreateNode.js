@@ -1,12 +1,21 @@
 // This code was borrowed from gatsby-transformer-json.
-// The plan is to integrate some of the normalizers from gatsby-source-wordpress here.
+// The plan is to integrate some of the normalizers from gatsby-source-wordpress inside createNodeFromEntity.
 
 const _ = require(`lodash`);
 const path = require(`path`);
 const { createNodeFromEntity } = require(`./normalize`);
 
 async function onCreateNode(
-  { node, actions, loadNodeContent, createNodeId, createContentDigest },
+  {
+    node,
+    actions,
+    loadNodeContent,
+    createNodeId,
+    createContentDigest,
+    getNodes,
+    reporter,
+    cache
+  },
   pluginOptions
 ) {
   function getType({ node, object, isArray }) {
@@ -25,22 +34,11 @@ async function onCreateNode(
 
   const { deleteNode, deletePage, createNode, createParentChildLink } = actions;
 
-  function transformObject(obj, id, type) {
-    return createNodeFromEntity(
-      obj,
-      id,
-      type,
-      createParentChildLink,
-      createContentDigest,
-      node,
-      createNode
-    );
-  }
-
   if (node.internal.type === "SitePage") {
     if (node.path.startsWith("/preview/")) {
       // remove preview template pages from the sitemap
-      return deleteNode({ node: node });
+      deleteNode({ node: node });
+      return;
     } else if (
       node.path.includes("/psychic-window/") ||
       node.path.includes("/schema_builder/")
@@ -52,24 +50,40 @@ async function onCreateNode(
     }
   }
 
-  if (node.internal.mediaType !== `application/json`) {
-    // We only care about JSON content.
-    return;
+  // We only care about JSON content
+  if (node.internal.mediaType !== `application/json`) return;
+
+  async function transformObject(obj, id, type) {
+    await createNodeFromEntity({
+      entity: obj,
+      id,
+      type,
+      createParentChildLink,
+      createContentDigest,
+      parentNode: node,
+      createNode,
+      getNodes,
+      pluginOptions,
+      cache,
+      reporter
+    });
   }
 
   const content = await loadNodeContent(node);
   const parsedContent = JSON.parse(content);
 
   if (_.isArray(parsedContent)) {
-    parsedContent.forEach((obj, i) => {
-      transformObject(
-        obj,
-        obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
-        getType({ node, object: obj, isArray: true })
-      );
-    });
+    await Promise.all(
+      parsedContent.map((obj, i) =>
+        transformObject(
+          obj,
+          obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
+          getType({ node, object: obj, isArray: true })
+        )
+      )
+    );
   } else if (_.isPlainObject(parsedContent)) {
-    transformObject(
+    await transformObject(
       parsedContent,
       parsedContent.id ? parsedContent.id : createNodeId(`${node.id} >>> JSON`),
       getType({ node, object: parsedContent, isArray: false })
