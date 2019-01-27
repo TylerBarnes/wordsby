@@ -103,8 +103,8 @@ function onCreateNode(
         );
 
         if (i === parsedContent.length - 1) {
-          resolve();
-          return;
+          // resolve();
+          // return;
         }
       });
 
@@ -118,11 +118,11 @@ function onCreateNode(
         getType({ node, object: parsedContent, isArray: false })
       );
 
-      resolve();
-      return;
+      // resolve();
+      // return;
     } else {
-      resolve();
-      return;
+      // resolve();
+      // return;
     }
   });
 }
