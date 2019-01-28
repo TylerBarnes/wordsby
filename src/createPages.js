@@ -67,6 +67,14 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
           }
         }
       }
+
+      wordsbyLatestBuild {
+        timestamp
+      }
+
+      wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
+        value
+      }
     }
   `)
     .then(result => {
@@ -98,6 +106,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: post.node.pathname,
               component: template,
               context: {
+                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                wpUrl: result.data.wpUrl.value,
                 id: post.node.ID,
                 previousPost:
                   typeof posts[index - 1] !== "undefined"
@@ -132,6 +142,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               itemsPerPage: itemsPerPage,
               pathPrefix: post.node.pathname.replace(/\/$/, ""),
               context: {
+                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                wpUrl: result.data.wpUrl.value,
                 archive: true,
                 id: post.node.ID,
                 post_type: post.node.acf.post_type
@@ -164,6 +176,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: pathname,
               component: template,
               context: {
+                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                wpUrl: result.data.wpUrl.value,
                 taxonomy_slug: name,
                 taxonomy_name: label,
                 terms: terms
@@ -188,6 +202,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
                   path: pathname,
                   component: template,
                   context: {
+                    latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                    wpUrl: result.data.wpUrl.value,
                     label: name,
                     slug: slug,
                     wordpress_id: ID
