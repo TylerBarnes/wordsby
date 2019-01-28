@@ -98,6 +98,8 @@ class InstantPublish extends Component {
   componentDidMount = () => this.getLiveData();
 
   componentDidUpdate(previousProps) {
+    // only update if we're on a new page.
+    // Sometimes the component does extra updates
     if (previousProps.location.pathname !== this.props.location.pathname) {
       this.setState({ props: false });
       this.getLiveData();
@@ -105,15 +107,17 @@ class InstantPublish extends Component {
   }
 
   render = () => {
+    const { children, location } = this.props;
+    const { props: stateProps, currentPath } = this.state;
     if (
-      this.state.props &&
-      this.state.props.data &&
-      this.state.currentPath &&
-      this.state.currentPath === this.props.location.pathname
+      stateProps &&
+      stateProps.data &&
+      currentPath &&
+      currentPath === location.pathname
     ) {
-      return React.cloneElement(this.props.children, this.state.props);
+      return React.cloneElement(children, stateProps);
     } else {
-      return React.cloneElement(this.props.children, this.props);
+      return children;
     }
   };
 }
