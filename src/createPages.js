@@ -12,6 +12,8 @@ const createPreviewPages = require("./createPreviewPages");
 const getFirstExistingTemplate = require("./utils/getFirstExistingTemplate");
 const shouldIgnorePath = require("./utils/shouldIgnorePath");
 
+const timestamp = Math.round(new Date().getTime() / 1000);
+
 let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
   dot: true
 });
@@ -68,10 +70,6 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
         }
       }
 
-      wordsbyLatestBuild {
-        timestamp
-      }
-
       wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
         value
       }
@@ -106,7 +104,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: post.node.pathname,
               component: template,
               context: {
-                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                latestBuild: timestamp,
                 wpUrl: result.data.wpUrl.value,
                 id: post.node.ID,
                 previousPost:
@@ -142,7 +140,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               itemsPerPage: itemsPerPage,
               pathPrefix: post.node.pathname.replace(/\/$/, ""),
               context: {
-                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                latestBuild: timestamp,
                 wpUrl: result.data.wpUrl.value,
                 archive: true,
                 id: post.node.ID,
@@ -176,7 +174,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: pathname,
               component: template,
               context: {
-                latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                latestBuild: timestamp,
                 wpUrl: result.data.wpUrl.value,
                 taxonomy_slug: name,
                 taxonomy_name: label,
@@ -202,7 +200,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
                   path: pathname,
                   component: template,
                   context: {
-                    latestBuild: result.data.wordsbyLatestBuild.timestamp,
+                    latestBuild: timestamp,
                     wpUrl: result.data.wpUrl.value,
                     label: name,
                     slug: slug,

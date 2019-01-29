@@ -8,7 +8,8 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
     return <Preview {...props}>{element}</Preview>;
   } else if (
     !!pluginOptions &&
-    pluginOptions.instantPublish
+    (pluginOptions.instantPublish !== false ||
+      typeof pluginOptions.instantPublish === "undefined")
     // props.pageContext.env === "production"
   ) {
     return <InstantPublish {...props}>{element}</InstantPublish>;
