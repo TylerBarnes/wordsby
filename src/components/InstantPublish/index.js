@@ -8,7 +8,7 @@ class InstantPublish extends Component {
     this.state = {
       props: false,
       currentPath: false,
-      debug: false
+      debug: this.props.debug || false
     };
 
     this.getLiveData = this.getLiveData.bind(this);
@@ -28,6 +28,10 @@ class InstantPublish extends Component {
     const lastPublishUrl = `${restUrl}/last_publish/${id}`;
     const liveDataUrl = `${restUrl}/instant_publish_collections/${id}`;
 
+    this.log(`You have instant publish debug mode enabled.`);
+    this.log(
+      `Fetching data from ${liveDataUrl} and rehydrating the current page with live data.`
+    );
     const storageName = `@@liveData|${currentPath}`;
     const sessionStorageString = sessionStorage.getItem(storageName);
 
@@ -42,7 +46,7 @@ class InstantPublish extends Component {
       liveDataProps.data.wordsbyCollections =
         sessionStorageJSON.data.wordsbyCollections;
 
-      this.log("use localstorage data");
+      this.log("current props + localstorage data:");
       this.log(liveDataProps);
 
       this.setState({
@@ -62,7 +66,7 @@ class InstantPublish extends Component {
     // we can bail and keep using it.
     if (
       sessionStorageString &&
-      sessionStorageJSON.latestPublishTime == latestPublishTime &&
+      sessionStorageJSON.latestPublishTime === latestPublishTime &&
       sessionStorageJSON.latestPublishTime > latestBuildTime &&
       !this.state.debug
     )
@@ -86,9 +90,14 @@ class InstantPublish extends Component {
       return console.warn(e);
     }
 
+    this.log("live data response:");
+    this.log(liveData);
+
+    liveDataProps.data.wordsbyCollections = liveData;
+
     // set the updated props + current path so the page knows to update
     this.setState({
-      data: liveData,
+      props: liveDataProps,
       currentPath: currentPath
     });
 
@@ -99,10 +108,8 @@ class InstantPublish extends Component {
     ).length;
     const remSpace = limit - usedSpace;
 
-    this.log("used bytes:");
-    this.log(usedSpace);
-    this.log("remaining bytes:");
-    this.log(remSpace);
+    this.log(`session storage bytes in use: ${usedSpace}`);
+    this.log(`remaining bytes available: ${remSpace}`);
 
     // get a string of our data.
     const jsonString = JSON.stringify({
@@ -117,6 +124,7 @@ class InstantPublish extends Component {
 
     // store data in session storage so that reloads dont require more http requests.
     sessionStorage.setItem(storageName, jsonString);
+    this.log(`session data stored in key: ${storageName}`);
   }
 
   componentDidMount = () => this.getLiveData();

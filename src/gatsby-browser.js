@@ -9,10 +9,21 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   } else if (
     !!pluginOptions &&
     (pluginOptions.instantPublish !== false ||
-      typeof pluginOptions.instantPublish === "undefined")
-    // props.pageContext.env === "production"
+      typeof pluginOptions.instantPublish === "undefined") &&
+    (process.env.NODE_ENV !== "development" ||
+      pluginOptions.instantPublish === "debug")
   ) {
-    return <InstantPublish {...props}>{element}</InstantPublish>;
+    return (
+      <InstantPublish
+        debug={
+          pluginOptions.instantPublish === "debug" &&
+          process.env.NODE_ENV === "development"
+        }
+        {...props}
+      >
+        {element}
+      </InstantPublish>
+    );
   } else {
     return element;
   }
