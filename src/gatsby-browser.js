@@ -68,3 +68,5 @@ exports.onRouteUpdate = () => {
     }
   }
 };
+
+exports.onClientEntry = () => import("isomorphic-fetch");
