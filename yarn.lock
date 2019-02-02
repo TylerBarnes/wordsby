@@ -2013,6 +2013,15 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+belter@^1.0.41:
+  version "1.0.85"
+  resolved "https://registry.yarnpkg.com/belter/-/belter-1.0.85.tgz#d643a4a1df57c84391254f95c4387f9adf1edf27"
+  integrity sha512-XuVck/HWgjxBIWoLk4JXIrUOO/f2wGJHOP5fd5dmf1uJppA2qdtRKddL3EwMEL4+6NhQ5qoDD2w2aAhuP57rLQ==
+  dependencies:
+    cross-domain-safe-weakmap "^1.0.20"
+    cross-domain-utils "^2.0.10"
+    zalgo-promise "^1.0.28"
+
 better-assert@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/better-assert/-/better-assert-1.0.2.tgz#40866b9e1b9e0b55b481894311e68faffaebc522"
@@ -3125,6 +3134,20 @@ create-react-context@^0.2.1:
   dependencies:
     fbjs "^0.8.0"
     gud "^1.0.0"
+
+cross-domain-safe-weakmap@^1.0.1, cross-domain-safe-weakmap@^1.0.20:
+  version "1.0.23"
+  resolved "https://registry.yarnpkg.com/cross-domain-safe-weakmap/-/cross-domain-safe-weakmap-1.0.23.tgz#48e662e7ed2dcb71b1652e75a8c3fac7840189c1"
+  integrity sha512-yGsAJzibnlDcWESitCcO6mAbywWL+jV2woftEPgyfuPcA6sFdT1TGI99DZPZfyYxkFPKpP7tCgQcH2V5CJVUaQ==
+  dependencies:
+    cross-domain-utils "^2.0.0"
+
+cross-domain-utils@^2.0.0, cross-domain-utils@^2.0.10:
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/cross-domain-utils/-/cross-domain-utils-2.0.23.tgz#b38b5c4e41f9026b2b73b0f1d75b2ca5955ca19a"
+  integrity sha512-xuVAS97YLJnqCALQeV8+4AIjzGPDK4ldmtRaReMPFbNgr3io+zLbGDjuzhLYgrVeWg6w76oALB8eiYA+HVvvaQ==
+  dependencies:
+    zalgo-promise "^1.0.11"
 
 cross-fetch@2.2.2:
   version "2.2.2"
@@ -6946,6 +6969,11 @@ lockfile@^1.0.4:
   dependencies:
     signal-exit "^3.0.2"
 
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -8430,6 +8458,17 @@ posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
+
+post-robot@^9.0.36:
+  version "9.0.36"
+  resolved "https://registry.yarnpkg.com/post-robot/-/post-robot-9.0.36.tgz#0abc7928779793f1d367585c18de276bf52fb499"
+  integrity sha512-eTSuMG4EODm93k+TVmHYemD6JUbZDQO4uas7RcyfF78y6t3osAqIpD0+4e4YoTK7DPFnvgF+4PT3ywprF/a2qQ==
+  dependencies:
+    belter "^1.0.41"
+    cross-domain-safe-weakmap "^1.0.1"
+    cross-domain-utils "^2.0.0"
+    universal-serialize "^1.0.4"
+    zalgo-promise "^1.0.3"
 
 postcss-calc@^7.0.0:
   version "7.0.1"
@@ -10795,6 +10834,11 @@ unique-string@^1.0.0:
   dependencies:
     crypto-random-string "^1.0.0"
 
+universal-serialize@^1.0.4:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/universal-serialize/-/universal-serialize-1.0.6.tgz#3fd9c4807a6203f7b89b94000775d219e20a5e00"
+  integrity sha512-X7VUgs4rXraJ0MmXBr0smrfwryQ8hK4zoLnM/MYHGgw0XO+hlQhsupM33jg3Cy6Hs4cwBE4D4/Lhezx1OLN2PQ==
+
 universalify@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.2.tgz#b646f69be3942dabcecc9d6639c80dc105efaa66"
@@ -10911,6 +10955,11 @@ use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
+
+utf8-byte-length@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/utf8-byte-length/-/utf8-byte-length-1.0.4.tgz#f45f150c4c66eee968186505ab93fcbb8ad6bf61"
+  integrity sha1-9F8VDExm7uloGGUFq5P8u4rWv2E=
 
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
@@ -11435,6 +11484,11 @@ yurnalist@^1.0.2:
     semver "^5.1.0"
     strip-ansi "^5.0.0"
     strip-bom "^3.0.0"
+
+zalgo-promise@^1.0.11, zalgo-promise@^1.0.28, zalgo-promise@^1.0.3:
+  version "1.0.37"
+  resolved "https://registry.yarnpkg.com/zalgo-promise/-/zalgo-promise-1.0.37.tgz#7408f8f0af586f6ee32fa012c68a173cf7c3fd5a"
+  integrity sha512-KFz47YFobpPzGJ2h504r2Vq9uZPdhb5uodVmz595oK3vXR56CvSxo439lQUOWFkM5tqN1Ugc21/qjOjKN/gVMw==
 
 zen-observable-ts@^0.8.13:
   version "0.8.13"

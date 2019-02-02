@@ -1,10 +1,29 @@
 const React = require("react");
 const Preview = require("./components/Preview").default;
+const InstantPublish = require("./components/InstantPublish").default;
 
 // eslint-disable-next-line react/prop-types,react/display-name
-exports.wrapPageElement = ({ element, props }) => {
+exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   if (props.pageContext && props.pageContext.preview) {
     return <Preview {...props}>{element}</Preview>;
+  } else if (
+    !!pluginOptions &&
+    (pluginOptions.instantPublish !== false ||
+      typeof pluginOptions.instantPublish === "undefined") &&
+    (process.env.NODE_ENV !== "development" ||
+      pluginOptions.instantPublish === "debug")
+  ) {
+    return (
+      <InstantPublish
+        debug={
+          pluginOptions.instantPublish === "debug" &&
+          process.env.NODE_ENV === "development"
+        }
+        {...props}
+      >
+        {element}
+      </InstantPublish>
+    );
   } else {
     return element;
   }
@@ -49,3 +68,5 @@ exports.onRouteUpdate = () => {
     }
   }
 };
+
+exports.onClientEntry = () => import("isomorphic-fetch");

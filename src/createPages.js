@@ -12,6 +12,8 @@ const createPreviewPages = require("./createPreviewPages");
 const getFirstExistingTemplate = require("./utils/getFirstExistingTemplate");
 const shouldIgnorePath = require("./utils/shouldIgnorePath");
 
+const timestamp = Math.round(new Date().getTime() / 1000);
+
 let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
   dot: true
 });
@@ -67,6 +69,10 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
           }
         }
       }
+
+      wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
+        value
+      }
     }
   `)
     .then(result => {
@@ -98,6 +104,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: post.node.pathname,
               component: template,
               context: {
+                latestBuild: timestamp,
+                wpUrl: result.data.wpUrl.value,
                 id: post.node.ID,
                 previousPost:
                   typeof posts[index - 1] !== "undefined"
@@ -132,6 +140,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               itemsPerPage: itemsPerPage,
               pathPrefix: post.node.pathname.replace(/\/$/, ""),
               context: {
+                latestBuild: timestamp,
+                wpUrl: result.data.wpUrl.value,
                 archive: true,
                 id: post.node.ID,
                 post_type: post.node.acf.post_type
@@ -164,6 +174,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
               path: pathname,
               component: template,
               context: {
+                latestBuild: timestamp,
+                wpUrl: result.data.wpUrl.value,
                 taxonomy_slug: name,
                 taxonomy_name: label,
                 terms: terms
@@ -188,6 +200,8 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
                   path: pathname,
                   component: template,
                   context: {
+                    latestBuild: timestamp,
+                    wpUrl: result.data.wpUrl.value,
                     label: name,
                     slug: slug,
                     wordpress_id: ID
