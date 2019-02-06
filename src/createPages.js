@@ -20,7 +20,8 @@ let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
 
 createTemplatesJson({ existingTemplateFiles, templatesPath });
 
-module.exports = ({ actions, graphql }, { ignorePaths }) => {
+module.exports = async ({ actions, graphql }, pluginOptions) => {
+  const { ignorePaths } = pluginOptions;
   const { createPage } = actions;
 
   if (!fs.existsSync(defaultTemplate)) {
@@ -34,6 +35,41 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
     ignorePaths
   });
 
+  const {
+    data: {
+      allWordsbyActivePlugins: { edges: activePlugins }
+    }
+  } = await graphql(`
+    {
+      allWordsbyActivePlugins {
+        edges {
+          node {
+            Name
+          }
+        }
+      }
+    }
+  `);
+
+  const yoastFragment = activePlugins.find(
+    ({ node }) => node.Name === "Yoast SEO"
+  )
+    ? `
+    yoast {
+          seo_title
+          seo_metadesc
+          og_title
+          og_description
+          og_image {
+            publicURL
+          }
+          og_image_id
+          content_score
+          canonical_url
+        }
+  `
+    : ``;
+
   return graphql(`
     {
       allWordsbyCollections(filter: { post_status: { eq: "publish" } }) {
@@ -44,6 +80,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
             post_type
             post_title
             template_slug
+            ${yoastFragment}
             acf {
               is_archive
               posts_per_page
@@ -88,7 +125,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
       // create post type pages
       _.each(posts, (post, index) => {
         const {
-          node: { template_slug, pathname }
+          node: { template_slug, pathname, yoast }
         } = post;
 
         if (shouldIgnorePath({ ignorePaths, pathname })) return true;
@@ -107,6 +144,7 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
                 latestBuild: timestamp,
                 wpUrl: result.data.wpUrl.value,
                 id: post.node.ID,
+                yoast,
                 previousPost:
                   typeof posts[index - 1] !== "undefined"
                     ? posts[index - 1].node
@@ -213,9 +251,6 @@ module.exports = ({ actions, graphql }, { ignorePaths }) => {
       }
     })
     .catch(err => {
-      throw `
-            ${err}
-            If the error above isn't descriptive enough maybe your WP site is down, your WP connection details are wrong or Wordsby Admin isn't active on your WP install. Download the admin theme at https://github.com/TylerBarnes/GatsbyPress-Admin
-          `;
+      throw err;
     });
 };
