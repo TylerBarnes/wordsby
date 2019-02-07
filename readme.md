@@ -25,10 +25,10 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
 
 - WordPress data and media files are commited directly to your git repo (like netlify cms).
 - The admin preview button just works
-- Use WP "microservices" with WordPress forms, comments, and any other frontend WP plugin.
-- Page url structure is taked from WordPress permalinks
+- Use WP "microservices" with WordPress forms, comments, and any other frontend WP plugin using the `<PsychicWindow />` component.
+- Page url structure is taken from WordPress permalinks
 - WP menus work out of the box using `<MenuItems slug="menu-slug" />`
-- No need to edit gatsby-node.js as the site structure is taken from WordPress
+- No need to edit `gatsby-node.js` as the site structure is taken from WordPress
 - WordPress page template picker is connected to Gatsby
 - Basic template hierarchy with fallback template support so editors and admins can't break the build by selecting the wrong template
 - Yoast SEO support using the `<Yoast />` component.
