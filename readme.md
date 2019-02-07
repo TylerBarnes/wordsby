@@ -23,23 +23,25 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
 
 ## Feature list
 
-- Wordsby Admin commits JSON and media files directly to your git repo (like netlify cms).
-- Instant admin editor previews from WP admin for all post types using regular WP preview button
-- WP "microservices" using WordPress forms, comments, and any other frontend WP plugin in your gatsby site.
-- WP permalink structure is used for Gatsby pathnames & links
-- WP menus just work
-- No need to edit gatsby-node.js
-- Select your gatsby template from within WP
-- Basic template hierarchy with default template support so editors and admins can't break the build
-- Backend permalinks point to your Gatsby frontend
+- WordPress data and media files are commited directly to your git repo (like netlify cms).
+- The admin preview button just works
+- Use WP "microservices" with WordPress forms, comments, and any other frontend WP plugin.
+- Page url structure is taked from WordPress permalinks
+- WP menus work out of the box using `<MenuItems slug="menu-slug" />`
+- No need to edit gatsby-node.js as the site structure is taken from WordPress
+- WordPress page template picker is connected to Gatsby
+- Basic template hierarchy with fallback template support so editors and admins can't break the build by selecting the wrong template
+- Yoast SEO support using the `<Yoast />` component.
+- Backend view page links point to your Gatsby frontend
 - Any post or page can become an archive page with pagination via a checkbox on each post/page edit screen
 - Taxonomy term and archive pages are built automatically if there is a template for them in gatsby
 - Page context contains previous / next post names and links relative to the current page
 - Schema builder post type to build out your graphql schema and prevent the missing data bug in gatsby that breaks your build when you're missing acf flexible content fields, one post of every post type, and one category.
+- Ability to run your 5,000+ page WordPress site on $2/month shared hosting and get the performance of a finely tuned VPS
 
 ### Bonus features:
 
 - Improved WP admin theme
-- Automatic unsplash nature avatars for all users
-- Faster `gatsby develop` for small to medium sized sites
-- ACF-to-REST plugin is not needed as ACF support is built in
+- Automatically downloaded unsplash nature avatars for all users
+- Faster `gatsby develop` for small to medium sized sites since images & data are always local
+- ACF-to-REST and WP-API-Menus plugins are not needed as ACF/menu support is built in
