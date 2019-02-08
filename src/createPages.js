@@ -51,9 +51,10 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
     }
   `);
 
-  const yoastFragment = activePlugins.find(
+  const yoastActive = activePlugins.find(
     ({ node }) => node.Name === "Yoast SEO"
-  )
+  );
+  const yoastFragment = yoastActive
     ? `
     yoast {
           seo_title
@@ -107,6 +108,10 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
         }
       }
 
+      wordsbyData {
+        build_site_url
+      }
+
       wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
         value
       }
@@ -121,6 +126,10 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
       const posts = result.data.allWordsbyCollections.edges.filter(
         ({ node: post }) => post.post_type !== "schema_builder"
       );
+
+      const {
+        wordsbyData: { build_site_url: buildUrl }
+      } = result.data;
 
       // create post type pages
       _.each(posts, (post, index) => {
@@ -144,6 +153,8 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
                 latestBuild: timestamp,
                 wpUrl: result.data.wpUrl.value,
                 id: post.node.ID,
+                pagePath: post.node.pathname,
+                buildUrl,
                 yoast,
                 previousPost:
                   typeof posts[index - 1] !== "undefined"

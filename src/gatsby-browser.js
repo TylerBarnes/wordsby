@@ -1,11 +1,16 @@
 const React = require("react");
 const Preview = require("./components/Preview").default;
 const InstantPublish = require("./components/InstantPublish").default;
+const PageElement = require("./components/PageElement").default;
 
 // eslint-disable-next-line react/prop-types,react/display-name
 exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   if (props.pageContext && props.pageContext.preview) {
-    return <Preview {...props}>{element}</Preview>;
+    return (
+      <Preview {...props}>
+        <PageElement {...props}>{element}</PageElement>
+      </Preview>
+    );
   } else if (
     !!pluginOptions &&
     (pluginOptions.instantPublish !== false ||
@@ -21,11 +26,11 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
         }
         {...props}
       >
-        {element}
+        <PageElement {...props}>{element}</PageElement>
       </InstantPublish>
     );
   } else {
-    return element;
+    return <PageElement {...props}>{element}</PageElement>;
   }
 };
 

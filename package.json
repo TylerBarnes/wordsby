@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-wordsby",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A Gatsby plugin for Wordsby/Wordpress",
   "main": "index.js",
   "scripts": {
@@ -36,5 +36,8 @@
     "rimraf": "^2.6.2",
     "slash": "^2.0.0",
     "utf8-byte-length": "^1.0.4"
+  },
+  "peerDependencies": {
+    "wordsby-components": "^0.0.28"
   }
 }
