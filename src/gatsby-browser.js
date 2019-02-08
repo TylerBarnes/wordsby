@@ -34,9 +34,6 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   }
 };
 
-exports.disableCorePrefetching = () =>
-  process.env.WORDSBY_PREVIEW ? true : false;
-
 const {
   imageClass,
   imageBackgroundClass,
