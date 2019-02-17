@@ -5,6 +5,7 @@ const _ = require(`lodash`);
 const cheerio = require(`cheerio`);
 const { fluid } = require(`gatsby-plugin-sharp`);
 const path = require(`path`);
+// const { dump } = require(`dumper.js`);
 
 import removeImageSizes from "./utils/removeImageSizes";
 
@@ -161,8 +162,6 @@ const replaceInlineImageTagsWithFluidImages = async ({
   cache,
   reporter
 }) => {
-  if (typeof getNodes !== "function") return;
-
   const defaults = {
     maxWidth: 650,
     wrapperStyle: ``,
