@@ -3,7 +3,6 @@ const Preview = require("./components/Preview").default;
 const InstantPublish = require("./components/InstantPublish").default;
 const PageElement = require("./components/PageElement").default;
 
-// eslint-disable-next-line react/prop-types,react/display-name
 exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   if (props.pageContext && props.pageContext.preview) {
     return (
