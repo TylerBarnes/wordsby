@@ -56,13 +56,9 @@ const Yoast = ({ yoast, wpUrl, buildUrl, pagePath }) => {
       )}
 
       {/* OG image */}
-      {!!og_image &&
-        !!og_image.publicURL &&
-        !!buildUrl &&
-        typeof buildUrl === "string" &&
-        typeof og_image.publicUrl === "string" && (
-          <meta property="og:image" content={buildUrl + og_image.publicURL} />
-        )}
+      {!!og_image && !!og_image.publicURL && !!buildUrl && (
+        <meta property="og:image" content={buildUrl + og_image.publicURL} />
+      )}
 
       {/* OG site name */}
       {!!siteName && <meta property="og:site_name" content={siteName} />}
