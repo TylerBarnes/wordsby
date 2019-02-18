@@ -11,11 +11,10 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
       </Preview>
     );
   } else if (
-    !!pluginOptions &&
-    (pluginOptions.instantPublish !== false ||
-      typeof pluginOptions.instantPublish === "undefined") &&
-    (process.env.NODE_ENV !== "development" ||
-      pluginOptions.instantPublish === "debug")
+    (!!pluginOptions &&
+      !!pluginOptions.instantPublish &&
+      process.env.NODE_ENV !== "development") ||
+    pluginOptions.instantPublish === "debug"
   ) {
     return (
       <InstantPublish
