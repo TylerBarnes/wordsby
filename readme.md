@@ -31,7 +31,7 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
 - No need to edit `gatsby-node.js` as the site structure is taken from WordPress
 - WordPress page template picker is connected to Gatsby
 - Basic template hierarchy with fallback template support so editors and admins can't break the build by selecting the wrong template
-- Yoast SEO support using the `<Yoast />` component.
+- Automatic Yoast SEO support.
 - Backend view page links point to your Gatsby frontend
 - Any post or page can become an archive page with pagination via a checkbox on each post/page edit screen
 - Taxonomy term and archive pages are built automatically if there is a template for them in gatsby
