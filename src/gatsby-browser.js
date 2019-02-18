@@ -7,7 +7,7 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
   if (props.pageContext && props.pageContext.preview) {
     return (
       <Preview {...props}>
-        <PageElement {...props}>{element}</PageElement>
+        <PageElement>{element}</PageElement>
       </Preview>
     );
   } else if (
@@ -25,7 +25,7 @@ exports.wrapPageElement = ({ element, props }, pluginOptions) => {
         }
         {...props}
       >
-        <PageElement {...props}>{element}</PageElement>
+        <PageElement>{element}</PageElement>
       </InstantPublish>
     );
   } else {
