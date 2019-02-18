@@ -1,10 +1,10 @@
 import React from "react";
 import Yoast from "./Yoast";
 
-const PageElement = ({ children, pageContext }) => (
+const PageElement = ({ children, pageContext, data }) => (
   <>
     <Yoast {...pageContext} />
-    {children}
+    {React.cloneElement(children, { data })}
   </>
 );
 

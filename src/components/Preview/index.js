@@ -137,12 +137,10 @@ class Preview extends Component {
       const childrenWithPreview = React.Children.map(children, child => {
         return React.cloneElement(child, {
           data: {
-            wordpressWpCollections: this.state.previewData,
             wordsbyCollections: this.state.previewData,
             ...rest
           },
           previewData: {
-            wordpressWpCollections: this.state.previewData,
             wordsbyCollections: this.state.previewData,
             ...rest
           }
