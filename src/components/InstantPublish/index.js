@@ -143,6 +143,7 @@ class InstantPublish extends Component {
   render = () => {
     const { children, location } = this.props;
     const { props: stateProps, currentPath } = this.state;
+
     if (
       stateProps &&
       stateProps.data &&
@@ -151,7 +152,7 @@ class InstantPublish extends Component {
     ) {
       return React.cloneElement(children, stateProps);
     } else {
-      return children;
+      return React.cloneElement(children, this.props);
     }
   };
 }

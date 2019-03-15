@@ -7,7 +7,7 @@ exports.wrapPageElement = ({ element, props }) => {
   if (props.pageContext && props.pageContext.preview) {
     return (
       <Preview {...props}>
-        <PageElement {...props}>{element}</PageElement>
+        <PageElement>{element}</PageElement>
       </Preview>
     );
   } else {
