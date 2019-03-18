@@ -8,6 +8,8 @@ Wordsby Admin commits data and files from your WP instance directly to your gats
 
 **NOTE:** I'm using Wordsby in production with no problems, even though it's a WIP. Currently wordsby just works with plain .js files. .jsx, .tsx and .ts files don't work yet.
 
+Wordsby is currently macos only but should theoretically work fine on linux.
+
 ## Sites built with Wordsby
 
 - [TransitionLink](https://transitionlink.tylerbarnes.ca) [[source]](https://github.com/TylerBarnes/TransitionLinkDocs/)
