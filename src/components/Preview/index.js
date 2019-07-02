@@ -126,12 +126,20 @@ class Preview extends Component {
       .catch(error => console.warn(error));
   }
   render() {
+    if ( ! this.props || ! this.props.data ) {
+      return null;
+    }
+
+    const { props } = this;
+
     const {
-      props: {
-        children,
-        data: { wordpressWpCollections, wordsbyCollections, ...rest }
-      }
-    } = this;
+      children,
+      data: { wordpressWpCollections, wordsbyCollections, ...rest }
+    } = props;
+
+    if ( ! wordpressWpCollections || ! wordsbyCollections ) {
+      return null;
+    }
 
     if (this.state.previewData && typeof window !== "undefined") {
       const childrenWithPreview = React.Children.map(children, child => {

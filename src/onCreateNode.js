@@ -37,7 +37,7 @@ async function onCreateNode(
   if (node.internal.type === "SitePage") {
     if (node.path.startsWith("/preview/")) {
       // remove preview template pages from the sitemap
-      deleteNode({ node: node });
+      // deleteNode({ node: node });
       return;
     } else if (
       node.path.includes("/psychic-window/") ||
@@ -45,7 +45,7 @@ async function onCreateNode(
     ) {
       // delete schema builder and psychic window pages and nodes.
       deletePage({ path: node.path, component: node.component });
-      deleteNode({ node: node });
+      // deleteNode({ node: node });
       return;
     }
   }
