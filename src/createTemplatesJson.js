@@ -3,9 +3,13 @@ const path = require("path");
 
 const createTemplatesJson = ({ existingTemplateFiles, templatesPath }) => {
   return new Promise((resolve, reject) => {
-    const trimmedPaths = existingTemplateFiles.map(fullPath =>
-      fullPath.replace(templatesPath + "/", "").replace(/\.js|\.jsx/gi, "")
-    );
+    const trimmedPaths = existingTemplateFiles.map(fullPath => {
+      const updatedPath = fullPath
+        .replace(templatesPath + "/", "")
+        .replace(/\.js|\.jsx/gi, "");
+
+      return updatedPath;
+    });
 
     const templateJsonString = JSON.stringify(trimmedPaths);
     const filepath = path.resolve(`./wordsby/data/templates.json`);

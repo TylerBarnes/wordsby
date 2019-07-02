@@ -1,8 +1,10 @@
 function shouldIgnorePath({ ignorePaths, pathname }) {
   if (!ignorePaths || !ignorePaths.length) return false;
 
+  let match; 
+
   const shouldIgnore = ignorePaths.some(path => {
-    const match = new RegExp(path);
+    match = new RegExp(path);
     return match.test(pathname);
   });
 

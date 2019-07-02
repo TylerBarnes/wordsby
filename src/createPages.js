@@ -6,7 +6,7 @@ const createTemplatesJson = require("./createTemplatesJson");
 const paginate = require("gatsby-awesome-pagination").paginate;
 
 // const componentFileType = "js";
-const templatesPath = path.resolve(`./src/templates/`);
+const templatesPath = path.resolve(`./src/templates/`).replace(/\\/g, '/');
 const defaultTemplate = `${templatesPath}/index.js`;
 const createPreviewPages = require("./createPreviewPages");
 const getFirstExistingTemplate = require("./utils/getFirstExistingTemplate");
@@ -18,11 +18,24 @@ let existingTemplateFiles = glob.sync(`${templatesPath}/**/*.js`, {
   dot: true
 });
 
+// console.log(templatesPath)
+// console.log(existingTemplateFiles)
+
 createTemplatesJson({ existingTemplateFiles, templatesPath });
 
 module.exports = async ({ actions, graphql }, pluginOptions) => {
-  const { ignorePaths } = pluginOptions;
+  const { ignorePaths, context: userContext = {} } = pluginOptions;
   const { createPage } = actions;
+
+  let normalizedUserContextData = {};
+
+  if (userContext && userContext.query && userContext.normalizer) {
+    console.log('user context query')
+    const rawContextQueryData = await graphql(userContext.query);
+    normalizedUserContextData = userContext.normalizer(rawContextQueryData);
+  } else {
+    console.log('no user context query')
+  }
 
   if (!fs.existsSync(defaultTemplate)) {
     throw `default template doesn't exist at ${defaultTemplate}`;
@@ -108,9 +121,9 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
         }
       }
 
-      wordsbyData {
-        build_site_url
-      }
+      # wordsbyData {
+      #   build_site_url
+      # }
 
       wpUrl: wordsbySiteMeta(key: { eq: "url" }) {
         value
@@ -127,17 +140,26 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
         ({ node: post }) => post.post_type !== "schema_builder"
       );
 
-      const {
-        wordsbyData: { build_site_url: buildUrl }
-      } = result.data;
+      // const {
+      //   wordsbyData: { build_site_url: buildUrl }
+      // } = result.data;
+      const buildUrl = null;
 
       // create post type pages
       _.each(posts, (post, index) => {
-        const {
+        let {
           node: { template_slug, pathname, yoast }
         } = post;
 
-        if (shouldIgnorePath({ ignorePaths, pathname })) return true;
+        if (shouldIgnorePath({ ignorePaths, pathname })) {
+          return true;
+        }
+
+        if (pathname.length > 1000) {
+          console.log(`pathname is too long, trimmed to 1000 chars: ${pathname}`)
+          pathname = pathname.substring(0, 1000)
+          console.log(pathname)
+        }
 
         const acf = post.node.acf;
         const archivePostType = acf && acf.post_type ? acf.post_type : false;
@@ -163,9 +185,12 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
                 nextPost:
                   typeof posts[index + 1] !== "undefined"
                     ? posts[index + 1].node
-                    : {}
+                    : {},
+                ...normalizedUserContextData
               }
             });
+          } else {
+            console.log(`no template for ${template_slug}, ${pathname}`);
           }
         }
 
@@ -193,7 +218,8 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
                 wpUrl: result.data.wpUrl.value,
                 archive: true,
                 id: post.node.ID,
-                post_type: post.node.acf.post_type
+                post_type: post.node.acf.post_type,
+                ...normalizedUserContextData
               }
             });
           }
@@ -227,7 +253,8 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
                 wpUrl: result.data.wpUrl.value,
                 taxonomy_slug: name,
                 taxonomy_name: label,
-                terms: terms
+                terms: terms,
+                ...normalizedUserContextData
               }
             });
           }
@@ -253,7 +280,8 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
                     wpUrl: result.data.wpUrl.value,
                     label: name,
                     slug: slug,
-                    wordpress_id: ID
+                    wordpress_id: ID,
+                    ...normalizedUserContextData
                   }
                 });
               }
