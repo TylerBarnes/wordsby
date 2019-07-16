@@ -30,11 +30,11 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
   let normalizedUserContextData = {};
 
   if (userContext && userContext.query && userContext.normalizer) {
-    console.log('user context query')
+    // console.log('user context query')
     const rawContextQueryData = await graphql(userContext.query);
     normalizedUserContextData = userContext.normalizer(rawContextQueryData);
   } else {
-    console.log('no user context query')
+    // console.log('no user context query')
   }
 
   if (!fs.existsSync(defaultTemplate)) {
@@ -95,11 +95,11 @@ module.exports = async ({ actions, graphql }, pluginOptions) => {
             post_title
             template_slug
             ${yoastFragment}
-            acf {
-              is_archive
-              posts_per_page
-              post_type
-            }
+            #acf {
+            #  is_archive
+            #  posts_per_page
+            #  post_type
+            #}
           }
         }
       }
