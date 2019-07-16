@@ -5,6 +5,7 @@ const _ = require(`lodash`);
 const path = require(`path`);
 const { createNodeFromEntity } = require(`./normalize`);
 
+
 async function onCreateNode(
   {
     node,
@@ -14,6 +15,8 @@ async function onCreateNode(
     createContentDigest,
     getNodes,
     reporter,
+    getNodesByType,
+    availableCollectionsIds,
     cache
   },
   pluginOptions
@@ -59,13 +62,16 @@ async function onCreateNode(
       id,
       type,
       createParentChildLink,
+      availableCollectionsIds,
       createContentDigest,
       parentNode: node,
       createNode,
       getNodes,
+      getNodesByType,
       pluginOptions,
       cache,
-      reporter
+      reporter,
+      createNodeId
     });
   }
 
@@ -74,18 +80,32 @@ async function onCreateNode(
 
   if (_.isArray(parsedContent)) {
     await Promise.all(
-      parsedContent.map((obj, i) =>
-        transformObject(
+      parsedContent.map( async (obj, i) => {
+
+        const nodeType = getType({ node, object: obj, isArray: true });
+
+        const parsedContentId = obj.ID 
+          ? createNodeId(`Collections${obj.ID}`) 
+          : createNodeId(`${node.id} [${i}] >>> JSON`);
+
+        await transformObject(
           obj,
-          obj.id ? obj.id : createNodeId(`${node.id} [${i}] >>> JSON`),
-          getType({ node, object: obj, isArray: true })
+          parsedContentId,
+          nodeType
         )
-      )
+
+      } )
     );
   } else if (_.isPlainObject(parsedContent)) {
+    
+    const parsedContentId 
+      = parsedContent.ID 
+        ? createNodeId(`Collections${parsedContent.ID}`)
+        : createNodeId(`${node.id} >>> JSON`);
+
     await transformObject(
       parsedContent,
-      parsedContent.id ? parsedContent.id : createNodeId(`${node.id} >>> JSON`),
+      parsedContentId,
       getType({ node, object: parsedContent, isArray: false })
     );
   }

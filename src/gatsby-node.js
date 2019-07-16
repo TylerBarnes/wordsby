@@ -1,4 +1,5 @@
-exports.onCreateNode = require("./onCreateNode");
+
+exports.sourceNodes = require("./sourceNodes");
 exports.createPages = require("./createPages");
 
 exports.onCreateBabelConfig = ({ actions }) => {

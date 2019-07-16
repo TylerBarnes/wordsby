@@ -5,7 +5,7 @@ const _ = require(`lodash`);
 const cheerio = require(`cheerio`);
 const { fluid } = require(`gatsby-plugin-sharp`);
 const path = require(`path`);
-// const { dump } = require(`dumper.js`);
+const { dump } = require(`dumper.js`);
 
 import removeImageSizes from "./utils/removeImageSizes";
 
@@ -33,7 +33,10 @@ const prepareACFChildNodes = (
   topLevelIndex,
   type,
   children,
-  childrenNodes
+  childrenNodes,
+  availableCollectionsIds,
+  createNodeId,
+  parent
 ) => {
   // Replace any child arrays with pointers to nodes
   _.each(obj, (value, key) => {
@@ -46,7 +49,10 @@ const prepareACFChildNodes = (
             topLevelIndex,
             type + key,
             children,
-            childrenNodes
+            childrenNodes,
+            availableCollectionsIds,
+            createNodeId,
+            obj
           ).id
       );
       delete obj[key];
@@ -76,11 +82,14 @@ exports.createNodeFromEntity = async ({
   id,
   type,
   createParentChildLink,
+  availableCollectionsIds,
   createContentDigest,
   parentNode,
   createNode,
   getNodes,
+  getNodesByType,
   pluginOptions,
+  createNodeId,
   cache,
   reporter
 }) => {
@@ -104,8 +113,16 @@ exports.createNodeFromEntity = async ({
               key,
               type,
               children,
-              childrenNodes
+              childrenNodes,
+              availableCollectionsIds,
+              createNodeId
             );
+
+            linkIdsToNodes({ 
+              node: acfChildNode, 
+              createNodeId, 
+              availableCollectionsIds 
+            });
 
             return acfChildNode.id;
           }
@@ -129,20 +146,36 @@ exports.createNodeFromEntity = async ({
 
   // normalizers:
   // replace wordpress images with gatsby images
-  const imageNodes = getNodes().filter(
-    node =>
-      !!node &&
-      !!node.absolutePath &&
-      node.absolutePath.includes("/wordsby/uploads/")
-  );
 
-  await replaceInlineImageTagsWithFluidImages({
-    node,
-    imageNodes,
-    pluginOptions,
-    cache,
-    reporter
-  });
+  // we only want to process images and relational fields for posts
+  if (type === 'WordsbyCollections') {
+      
+    const attachmentNodes = getNodesByType('WordsbyAttachments');
+
+    await linkRelativeImagesToNodes({
+      node,
+      attachmentNodes
+    });
+
+    const imageNodes = getNodesByType('File').filter(
+      node =>
+        !!node &&
+        !!node.absolutePath &&
+        node.absolutePath.includes("/wordsby/uploads/")
+    );
+
+    if (imageNodes && imageNodes.length) {
+      await replaceInlineImageTagsWithFluidImages({
+        node,
+        imageNodes,
+        pluginOptions,
+        cache,
+        reporter
+      });
+    }
+
+    linkIdsToNodes({ node, createNodeId, availableCollectionsIds });
+  };
 
   // add custom normalizers here in the future
 
@@ -154,6 +187,63 @@ exports.createNodeFromEntity = async ({
     createNode(node);
   });
 };
+
+const linkRelativeImagesToNodes = async ({ node, parent, attachmentNodes }) => {
+  for (let key of Object.keys(node)) {
+    const field = node[key];
+
+    if (!!field && typeof field === "string") {
+      if (!field.startsWith("../../")) continue;
+
+      const matchingAttachment 
+        = attachmentNodes.find( attachment => field.includes( attachment.file ) )
+      // console.log(field);
+      if (matchingAttachment) {
+        node[`${_.camelCase(key)}Attachment___NODE`] = matchingAttachment.id;
+      }
+    } else if (
+      !!field &&
+      Object.keys(field).length > 0 &&
+      !field.hasOwnProperty("contentDigest")
+    ) {
+      // recurse into objects & arrays
+      await linkRelativeImagesToNodes({
+        node: field,
+        parent: node,
+        attachmentNodes
+      });
+    }
+  }
+}
+
+const linkIdsToNodes = async ({ node, createNodeId, availableCollectionsIds }) => {
+  for (let key of Object.keys(node)) {
+    const field = node[key];
+
+    if (
+      field 
+      && typeof field === "number"
+      && availableCollectionsIds.includes(field)
+    ) {
+      const nodeId = createNodeId(`Collections${field}`);
+      
+      // make sure this field isn't the top level post ID field for this post
+      if (node.id !== nodeId) {
+        // add a relationship field to the linked node
+        node[`relationshipBy${key}___NODE`] = nodeId;
+      }
+
+    } else if (
+      !!field &&
+      typeof field === 'object' &&
+      Object.keys(field).length > 0 &&
+      !field.hasOwnProperty("contentDigest")
+    ) {
+      // recurse into objects & arrays
+      await linkIdsToNodes({ node: field, createNodeId, availableCollectionsIds });
+    }
+  }
+}
 
 const replaceInlineImageTagsWithFluidImages = async ({
   node,
