@@ -36,10 +36,12 @@ const prepareACFChildNodes = (
   childrenNodes,
   availableCollectionsIds,
   createNodeId,
-  parent
+  // parent,
+  attachmentNodes
 ) => {
   // Replace any child arrays with pointers to nodes
-  _.each(obj, (value, key) => {
+  _.each(obj, async (value, key) => {
+    // this is a top level flexible content field array
     if (_.isArray(value) && value[0] && value[0].acf_fc_layout) {
       obj[`${key}___NODE`] = value.map(
         (v, indexItem) =>
@@ -52,10 +54,25 @@ const prepareACFChildNodes = (
             childrenNodes,
             availableCollectionsIds,
             createNodeId,
-            obj
+            obj,
+            attachmentNodes
           ).id
       );
       delete obj[key];
+    } else {
+      // this is one of the flexible content items inside the array
+      // link fields to nodes so we get attachments and relationships by ID
+
+      await linkRelativeImagesToNodes({
+        node: obj,
+        attachmentNodes
+      });
+
+      await linkIdsToNodes({ 
+        node: obj, 
+        createNodeId, 
+        availableCollectionsIds 
+      });
     }
   });
 
@@ -98,6 +115,8 @@ exports.createNodeFromEntity = async ({
   let children = [];
   let childrenNodes = [];
 
+  const attachmentNodes = getNodesByType('WordsbyAttachments');
+
   if (entity.acf) {
     _.each(entity.acf, (value, key) => {
       if (_.isArray(value) && value[0] && value[0].acf_fc_layout) {
@@ -115,14 +134,10 @@ exports.createNodeFromEntity = async ({
               children,
               childrenNodes,
               availableCollectionsIds,
-              createNodeId
+              createNodeId,
+              attachmentNodes
             );
 
-            linkIdsToNodes({ 
-              node: acfChildNode, 
-              createNodeId, 
-              availableCollectionsIds 
-            });
 
             return acfChildNode.id;
           }
@@ -149,8 +164,6 @@ exports.createNodeFromEntity = async ({
 
   // we only want to process images and relational fields for posts
   if (type === 'WordsbyCollections') {
-      
-    const attachmentNodes = getNodesByType('WordsbyAttachments');
 
     await linkRelativeImagesToNodes({
       node,
