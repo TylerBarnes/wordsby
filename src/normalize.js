@@ -187,7 +187,7 @@ exports.createNodeFromEntity = async ({
       });
     }
 
-    linkIdsToNodes({ node, createNodeId, availableCollectionsIds });
+    await linkIdsToNodes({ node, createNodeId, availableCollectionsIds });
   };
 
   // add custom normalizers here in the future
