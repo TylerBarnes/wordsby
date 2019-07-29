@@ -63,7 +63,7 @@ const prepareACFChildNodes = (
       // this is one of the flexible content items inside the array
       // link fields to nodes so we get attachments and relationships by ID
 
-      await linkRelativeImagesToNodes({
+      await linkAttachmentsToNodes({
         node: obj,
         attachmentNodes
       });
@@ -117,10 +117,19 @@ exports.createNodeFromEntity = async ({
 
   const attachmentNodes = getNodesByType('WordsbyAttachments');
 
-  if (entity.acf) {
-    _.each(entity.acf, (value, key) => {
+  const hasAcfFields = !!entity.acf;
+
+  // move acf fields to the top level
+  entity = {
+    ...entity,
+    ...entity.acf
+  };
+  delete entity.acf;
+
+  if (hasAcfFields) {
+    _.each(entity, (value, key) => {
       if (_.isArray(value) && value[0] && value[0].acf_fc_layout) {
-        entity.acf[`${key}_${entity.type}___NODE`] = entity.acf[key].map(
+        entity[`${key}_${entity.type}___NODE`] = entity[key].map(
           (f, i) => {
             const type = `WordPressAcf_${f.acf_fc_layout}`;
             delete f.acf_fc_layout;
@@ -138,12 +147,11 @@ exports.createNodeFromEntity = async ({
               attachmentNodes
             );
 
-
             return acfChildNode.id;
           }
         );
 
-        delete entity.acf[key];
+        delete entity[key];
       }
     });
   }
@@ -165,7 +173,7 @@ exports.createNodeFromEntity = async ({
   // we only want to process images and relational fields for posts
   if (type === 'WordsbyCollections') {
 
-    await linkRelativeImagesToNodes({
+    await linkAttachmentsToNodes({
       node,
       attachmentNodes
     });
@@ -201,7 +209,7 @@ exports.createNodeFromEntity = async ({
   });
 };
 
-const linkRelativeImagesToNodes = async ({ node, parent, attachmentNodes }) => {
+const linkAttachmentsToNodes = async ({ node, parent, attachmentNodes }) => {
   for (let key of Object.keys(node)) {
     const field = node[key];
 
@@ -209,8 +217,16 @@ const linkRelativeImagesToNodes = async ({ node, parent, attachmentNodes }) => {
       if (!field.startsWith("../../")) continue;
 
       const matchingAttachment 
-        = attachmentNodes.find( attachment => field.includes( attachment.file ) )
-      // console.log(field);
+        = attachmentNodes.find( ({ file_url }) => {
+          // if ( ! file_url ) return false;
+
+          // get relative paths
+          const filePathname = file_url.split('wp-content/')[1];
+
+          // return true if the relative path is included in this field
+          return field.includes( filePathname )
+        } )
+
       if (matchingAttachment) {
         node[`${_.camelCase(key)}Attachment___NODE`] = matchingAttachment.id;
       }
@@ -220,7 +236,7 @@ const linkRelativeImagesToNodes = async ({ node, parent, attachmentNodes }) => {
       !field.hasOwnProperty("contentDigest")
     ) {
       // recurse into objects & arrays
-      await linkRelativeImagesToNodes({
+      await linkAttachmentsToNodes({
         node: field,
         parent: node,
         attachmentNodes
