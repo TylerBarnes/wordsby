@@ -17,7 +17,8 @@ async function onCreateNode(
     reporter,
     getNodesByType,
     availableCollectionsIds,
-    cache
+    cache,
+    apiHelpers
   },
   pluginOptions
 ) {
@@ -37,24 +38,24 @@ async function onCreateNode(
 
   const { deleteNode, deletePage, createNode, createParentChildLink } = actions;
 
-  if (node.internal.type === "SitePage") {
-    if (node.path.startsWith("/preview/")) {
-      // remove preview template pages from the sitemap
-      // deleteNode({ node: node });
-      return;
-    } else if (
-      node.path.includes("/psychic-window/") ||
-      node.path.includes("/schema_builder/")
-    ) {
-      // delete schema builder and psychic window pages and nodes.
-      deletePage({ path: node.path, component: node.component });
-      // deleteNode({ node: node });
-      return;
-    }
-  }
+  // if (node.internal.type === "SitePage") {
+  //   if (node.path.startsWith("/preview/")) {
+  //     // remove preview template pages from the sitemap
+  //     // deleteNode({ node: node });
+  //     return;
+  //   } else if (
+  //     node.path.includes("/psychic-window/") ||
+  //     node.path.includes("/schema_builder/")
+  //   ) {
+  //     // delete schema builder and psychic window pages and nodes.
+  //     deletePage({ path: node.path, component: node.component });
+  //     // deleteNode({ node: node });
+  //     return;
+  //   }
+  // }
 
-  // We only care about JSON content
-  if (node.internal.mediaType !== `application/json`) return;
+  // // We only care about JSON content
+  // if (node.internal.mediaType !== `application/json`) return;
 
   async function transformObject(obj, id, type) {
     await createNodeFromEntity({
@@ -71,7 +72,8 @@ async function onCreateNode(
       pluginOptions,
       cache,
       reporter,
-      createNodeId
+      createNodeId,
+      apiHelpers
     });
   }
 
