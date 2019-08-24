@@ -12,13 +12,16 @@ const transformerMap = {
 const transformEntities = async ({
 	entities,
 	type,
-	previouslyTransformedEntities,
+	previouslyTransformedEntities = [],
 	apiHelpers,
 	pluginOptions,
 }) => {
 	const { createNodeId, createContentDigest } = apiHelpers
 
-	const availableCollectionsIds = entities.map(({ ID }) => ID)
+	const availableCollectionsIds = [
+		...entities.map(({ ID }) => ID),
+		...previouslyTransformedEntities.map(({ node }) => node.ID),
+	]
 
 	const transformedEntities = await Promise.all(
 		entities.map(async entity =>
@@ -38,7 +41,20 @@ const transformEntities = async ({
 		previouslyTransformedEntities &&
 		previouslyTransformedEntities.length
 	) {
-		return [...transformedEntities, ...previouslyTransformedEntities]
+		transformedEntities.forEach(entity => {
+			const previousIndex = previouslyTransformedEntities.findIndex(
+				prevEnt => prevEnt.ID === entity.ID,
+			)
+			if (previousIndex) {
+				// overwrite the old post with the updated post
+				previouslyTransformedEntities[previousIndex] = entity
+			} else {
+				// add the new post to the end of the array
+				previouslyTransformedEntities.push(entity)
+			}
+		})
+
+		return previouslyTransformedEntities
 	} else {
 		return transformedEntities
 	}

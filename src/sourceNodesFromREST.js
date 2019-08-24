@@ -64,25 +64,27 @@ const sourceEntitiesFromRESTByType = async ({
 	const { cache, reporter, actions } = apiHelpers
 	const { restUrl } = pluginOptions
 
+	const lastCachedRestUrl = await cache.get(`last-cached-rest-url`)
+	await cache.set(`last-cached-rest-url`, restUrl)
+
+	const urlHasntChanged = lastCachedRestUrl === restUrl
+	const urlHasChanged = !urlHasntChanged
+
+	if (urlHasChanged) {
+		await cache.set(`last-${type}-cache-time`, null)
+		await cache.set(`cached-transformed-${type}`, null)
+	}
+
 	const lastCacheTime = await cache.get(`last-${type}-cache-time`)
 
 	let transformedEntities = await cache.get(`cached-transformed-${type}`)
-
 	if (!transformedEntities || !transformedEntities.length) {
 		transformedEntities = []
 	}
 
-	let entities
-
 	// set the cache time for our next build to use
 	const unixTime = new Date().getTime()
 	await cache.set(`last-${type}-cache-time`, unixTime)
-
-
-	const lastCachedRestUrl = await cache.get(`last-cached-rest-url`)
-	await cache.set(`last-cached-rest-url`, restUrl)
-
-	const urlHasntChanged = lastCachedRestUrl === restUrl;
 
 	const url = `${restUrl}/wp-json/wordsby/v1/${type}/{{page}}${
 		lastCacheTime && urlHasntChanged // if the url changes, get everything again
@@ -95,6 +97,8 @@ const sourceEntitiesFromRESTByType = async ({
 	)
 
 	activityReporter.start()
+
+	let entities
 
 	try {
 		entities = await recursivePaginatedFetch({
@@ -114,7 +118,7 @@ const sourceEntitiesFromRESTByType = async ({
 			type,
 			apiHelpers,
 			previouslyTransformedEntities: transformedEntities,
-			pluginOptions
+			pluginOptions,
 		})
 
 		await cache.set(`cached-transformed-${type}`, transformedEntities)
