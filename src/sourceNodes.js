@@ -96,7 +96,7 @@ const sourceNodes = async (apiHelpers, pluginOptions) => {
 	wpRelationalDataActivity.end()
 
 	if (pluginOptions.restUrl) {
-		await sourceNodesFromREST(apiHelpers, pluginOptions)
+		await sourceNodesFromREST({ apiHelpers, pluginOptions })
 	}
 }
 
