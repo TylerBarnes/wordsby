@@ -249,7 +249,7 @@ const linkAttachmentsToNodes = async ({
 	attachmentNodes,
 	pluginOptions,
 }) => {
-	const { restUrl } = pluginOptions
+	const { restUrl } = pluginOptions || {}
 
 	for (let key of Object.keys(node)) {
 		const field = node[key]
