@@ -1,6 +1,6 @@
 
 exports.sourceNodes = require("./sourceNodes");
-exports.createPages = require("./createPages");
+exports.createPagesStatefully = require("./createPages");
 
 exports.onCreateBabelConfig = ({ actions }) => {
   actions.setBabelPlugin({
