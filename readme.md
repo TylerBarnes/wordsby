@@ -29,7 +29,7 @@ Check [the wiki](https://github.com/TylerBarnes/wordsby/wiki) for more info.
 
 - WordPress data and media files are commited directly to your git repo (like netlify cms).
 - The admin preview button just works
-- Use WP "microservices" with WordPress forms, comments, and any other frontend WP plugin using the `<PsychicWindow />` component.
+- Use any frontend WP plugin using the `<PsychicWindow />` component.
 - Page url structure is taken from WordPress permalinks
 - WP menus work out of the box using `<MenuItems slug="menu-slug" />`
 - No need to edit `gatsby-node.js` as the site structure is taken from WordPress
