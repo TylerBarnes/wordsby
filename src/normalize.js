@@ -332,7 +332,7 @@ const generateImagesAndUpdateNode = async function({
   // Create our base image tag
   let imageTag = `
       <img
-        class="${imageClass} ${formattedImgTag.classList.join(" ")}"
+        class="${imageClass}"
         style="${imageStyle}"
         alt="${formattedImgTag.alt ? formattedImgTag.alt : defaultAlt}"
         title="${formattedImgTag.title ? formattedImgTag.title : ``}"
@@ -391,7 +391,7 @@ const generateImagesAndUpdateNode = async function({
 
   let rawHTML = `
   <span
-    class="${imageWrapperClass}"
+    class="${imageWrapperClass} ${formattedImgTag.classList.join(" ")}"
     style="position: relative; display: block; ${
       showCaptions ? `` : options.wrapperStyle
     } max-width: ${presentationWidth}px; margin-left: auto; margin-right: auto;"
